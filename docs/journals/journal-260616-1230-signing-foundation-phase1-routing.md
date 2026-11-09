@@ -1,0 +1,26 @@
+# Signing Foundation Phase 1 — Foundation & Routing
+
+**Date:** 2026-06-16 ~12:30 ICT · **Flow:** `/cook plan.md --auto` (code mode) · **Scope:** BE Identity module · **Commit:** `77829382` (1 ahead, not pushed)
+
+## What shipped
+The provider-agnostic signing-workflow seam every later phase plugs into:
+- **`SigningRequest`** aggregate (Domain/Entities) — durable, pollable, with **no stored status column**. Holds only immutable identity + the link to its underlying provider record. Status is a *read-time projection* (`SigningRequestStatusProjector`) JOINing the underlying `SigningDocFlowRecord` / `SigningPendingTransaction`. This is the red-team H2 fix: a denormalised status can't drift from the underlying machine because it doesn't exist. The one terminal recorded directly is `FailureReason` for a guard/routing rejection *before* any underlying record exists.
+- **`ISignatureOrchestrator`** + **`SigningStrategyRouter`** — routes by `(artifactKind × provider capabilities)`, never by provider-key string. Resolves the provider, then matches exactly one strategy; zero matches → `NotSupportedException` (surfaced, never silent), more than one → `InvalidOperationException` (registration bug). Route validation happens *before* persistence, so an unsupported cell leaves no orphan row.
+- **3 strategy scaffolds** (docflow / detached / pades) — `CanHandle` is the real routing matrix; execution is deferred to Phases 2/3/5 (no throw-stubs in any reachable path). The PAdES strategy encodes the **C5 capability-exclusion**: it matches `ServerSideSigning` AND excludes `ClientSideSigning`, so a PDF on the USB provider (which declares both `RawSign` and `ClientSideSigning`) routes to doc-flow, never to the server-side assembler.
+- **cert==signer** wired via `VerifySignerBindingAsync` → the Phase-0 `ISignerBindingGuard` (returns a verdict, never throws for a binding failure).
+- EF config (`EntityTypeConfigurationBase<T>`), `AddSigningRequest` migration + `AddSigningRequestRlsPolicies` (tenant RLS), snapshot — all EF-scaffolded.
+
+## Decisions / lessons
+- **EF scaffold beats hand-authoring.** The plan flagged migration hand-authoring as risk #1 ("repo dotnet-ef unreliable"). Reality: `dotnet-ef migrations add` works fine — the gotcha is the manifest resolution (`dotnet ef` falls through to "tool not available"; must call `dotnet-ef` directly after `dotnet tool restore`). Cost: had to stop the API + AuthServer hosts (both lock `Identity.Infrastructure.dll`) to let the scaffold build. Scaffold produced a correct migration + Designer + snapshot in one shot; MigrationConsistency passed first try. Far safer than copying a 60-entity BuildTargetModel by hand.
+- **INVARIANT 260522-A payoff — plan step 6 was stale.** The plan's "add upload-validator magic-byte check" is already implemented: `FileSecurityService` (S8) does `%PDF`/PK magic-byte sniffing of the first 512 bytes + extension blocklist + zip-bomb, wired in `UploadFileCommandHandler`. A 5-min `grep ValidateMimeType` prevented adding a duplicate validator that would conflict with existing security logic (DRY). The only residual — cross-checking the *declared* ContentType against the *actual* magic — is genuinely a Phase 4 (upload hardening) concern and was surfaced to the user, not silently built.
+- **Architecture test outranks the plan's stated path.** Plan said `Domain/Signing/SigningRequest.cs`; `ModuleIsolationTests` requires any `AuditableEntity` subclass to reside in a namespace *containing* "Entities". Caught it by running the suite (initial run failed on exactly this). Moved to `Domain/Entities/` to match the sibling `SigningDocFlowRecord`/`SigningPendingTransaction` (whose status enums also live with the entity). Lesson: scaffold the migration *after* the namespace is final — the snapshot embeds the fully-qualified type string, so a late namespace move means regenerating or string-patching the snapshot + both Designers.
+- **Review surfaced a real RLS-bypass gap (M2, applied).** The status projection's underlying-record reads originally filtered by id only. The integration suite runs as `db_owner`, where RLS is *bypassed* — the documented false-green class in this repo — so an id-only read would be a latent cross-tenant read in exactly the context that's supposed to catch it. Added `&& r.TenantId == request.TenantId` to both reads. Cheap, aligns with the "explicit predicate + RLS defense-in-depth" posture.
+
+## Verification
+Build 0E (full solution incl. `AqtCoreFW.Api`) · Identity.Domain.Tests **47/47** (22 new) · Identity.Infrastructure.Tests **244/244** (9 new) · Architecture.Tests **14/14** (MigrationConsistency + ModuleIsolation) · code-review **DONE_WITH_CONCERNS** (0 Critical/High; M2 applied). Migrations applied to dev DB; dev stack restarted.
+
+## Carry-forward
+- **M1** — `SigningRequest` has no EF global tenant filter (only soft-delete). Safe today (2 tenant-scoped call sites); when Phases 2/3/5 add query sites, route through a tenant-scoped helper or add a non-`db_owner` least-priv regression test.
+- **L2** — Phase 2 controllers MUST source `tenantId` from the authenticated context, never caller input.
+- **Step-6 residual** — declared-ContentType vs actual-magic cross-check → Phase 4 (upload hardening).
+- Subagents (`code-reviewer`) recovered this session after being org-auth-disabled in prior sessions.

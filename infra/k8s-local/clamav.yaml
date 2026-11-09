@@ -1,0 +1,41 @@
+# ClamAV — local-only. Signature DB download on first boot is slow (~minutes); generous
+# startupProbe. Ephemeral: signatures re-download on restart.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clamav
+  namespace: aqt-data
+  labels: { app: clamav }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: clamav }
+  template:
+    metadata:
+      labels: { app: clamav }
+    spec:
+      containers:
+        - name: clamav
+          image: clamav/clamav:1.4
+          ports:
+            - containerPort: 3310
+          resources:
+            requests: { memory: "1Gi" }
+            limits: { memory: "2Gi" }
+          startupProbe:
+            tcpSocket: { port: 3310 }
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket: { port: 3310 }
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clamav
+  namespace: aqt-data
+spec:
+  selector: { app: clamav }
+  ports:
+    - { port: 3310, targetPort: 3310 }

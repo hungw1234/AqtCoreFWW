@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Forms.Application</AssemblyName>
+    <RootNamespace>AqtCoreFW.Forms.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AqtCoreFW.Forms.Application.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="HtmlSanitizer" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Dapper" />
+    <!-- WorkflowFinalizedFormSubmissionConsumer: MassTransit IConsumer<WorkflowInstanceFinalizedIntegrationEvent> -->
+    <PackageReference Include="MassTransit" />
+    <ProjectReference Include="..\AqtCoreFW.Forms.Domain\AqtCoreFW.Forms.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <!-- WorkflowFinalizedFormSubmissionConsumer reuses IFormSubmissionStatusClient (namespace SharedKernel.Contracts.Clients, assembly Forms.Contracts). -->
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Forms.Contracts\AqtCoreFW.Forms.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Notification.Contracts\AqtCoreFW.Notification.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Consent.Contracts\AqtCoreFW.Consent.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Workflow.Contracts\AqtCoreFW.Workflow.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Identity.Contracts\AqtCoreFW.Identity.Contracts.csproj" />
+  </ItemGroup>
+</Project>

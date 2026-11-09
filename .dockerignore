@@ -1,0 +1,55 @@
+# Exclude non-build artefacts — keep only src/ relevant to the Docker image
+
+# Version control
+.git/
+.gitignore
+
+# Documentation and planning
+*.md
+docs/
+plans/
+
+# Tests (not needed in image)
+tests/
+
+# Infrastructure definitions (not needed inside the image)
+infra/
+
+# Claude / tooling
+.claude/
+
+# CI/CD shared library
+jenkins-shared-library/
+
+# Build output — prevents Windows NuGet paths (D:\NuGetPackages, C:\Program Files...)
+# from breaking Linux container builds (MSB3030/MSB4018)
+**/obj/
+**/bin/
+
+# IDE / editor
+.vs/
+.vscode/
+**/*.user
+
+# GitHub
+.github/
+
+# External repos
+external/
+worktrees/
+
+# Frontend build inputs the web image must NOT inherit from the host
+# (web/Dockerfile builds from the repo-root context so it can reach
+# other/vgca_usb_token — see the vite static-copy of vgcaplugin.js)
+web/node_modules/
+web/dist/
+web/coverage/
+web/e2e/
+web/plans/
+web/.claude/
+web/.env
+web/.env.*
+
+# OS artefacts
+.DS_Store
+Thumbs.db

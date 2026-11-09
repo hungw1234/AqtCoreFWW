@@ -1,0 +1,20 @@
+{
+  "_comment": "Phase-3 ships empty. Phase-4 batches append module + entity names per commit. Phase-8 finalize asserts coverage = entity-tier-mapping-data.csv row count.",
+  "modules": [
+    "masterdata",
+    "identity",
+    "audit",
+    "files",
+    "systemparams",
+    "forms",
+    "workflow",
+    "organization",
+    "ai",
+    "collaboration",
+    "integration",
+    "notifications",
+    "reporting",
+    "rules"
+  ],
+  "entities": []
+}

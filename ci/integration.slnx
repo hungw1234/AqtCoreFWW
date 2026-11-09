@@ -1,0 +1,25 @@
+<Solution>
+  <Project Path="../tests/integration/AqtCoreFW.Ai.Integration.Tests/AqtCoreFW.Ai.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Audit.Integration.Tests/AqtCoreFW.Audit.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.BackgroundJobs.Integration.Tests/AqtCoreFW.BackgroundJobs.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.BusinessProcess.Integration.Tests/AqtCoreFW.BusinessProcess.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Cache.Integration.Tests/AqtCoreFW.Cache.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Collaboration.Integration.Tests/AqtCoreFW.Collaboration.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Concurrency.Tests/AqtCoreFW.Concurrency.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Files.Integration.Tests/AqtCoreFW.Files.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Forms.Integration.Tests/AqtCoreFW.Forms.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Identity.Integration.Tests/AqtCoreFW.Identity.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Installation.Tests/AqtCoreFW.Installation.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Integration.Integration.Tests/AqtCoreFW.Integration.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.MasterData.Integration.Tests/AqtCoreFW.MasterData.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Messaging.Integration.Tests/AqtCoreFW.Messaging.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Notifications.Integration.Tests/AqtCoreFW.Notifications.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Organization.Integration.Tests/AqtCoreFW.Organization.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Reporting.Integration.Tests/AqtCoreFW.Reporting.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Resilience.Tests/AqtCoreFW.Resilience.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Rules.Integration.Tests/AqtCoreFW.Rules.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Security.Tests/AqtCoreFW.Security.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.SystemParams.Integration.Tests/AqtCoreFW.SystemParams.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.TenantIsolation.Tests/AqtCoreFW.TenantIsolation.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Workflow.Integration.Tests/AqtCoreFW.Workflow.Integration.Tests.csproj" />
+</Solution>

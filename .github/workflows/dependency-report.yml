@@ -1,0 +1,112 @@
+name: Dependency report
+
+# Weekly, read-only inventory of library versions. Updates one pinned issue labelled
+# `dependency-report`; never edits code and never opens pull requests.
+# Runbook: docs/ops/dependency-report-runbook.md
+on:
+  schedule:
+    - cron: '0 1 * * 1' # Monday 08:00 Asia/Ho_Chi_Minh
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: dependency-report
+  cancel-in-progress: false
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # First, so any later failure (SDK download, self-test, report build) can still be flagged on the issue.
+      - name: Resolve report issue
+        id: issue
+        run: |
+          number=$(bash scripts/dependency-report/report-issue.sh resolve)
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: web/package.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Self-test report builder
+        run: node --test scripts/dependency-report/tests/*.test.mjs
+
+      - name: Prepare report directory
+        run: echo "REPORT_DIR=$RUNNER_TEMP/dependency-report" >> "$GITHUB_ENV" && mkdir -p "$RUNNER_TEMP/dependency-report"
+
+      # Collection steps may fail without stopping the run: a missing input is listed in the
+      # issue's "Thu thập lỗi" section, so the report never silently claims nothing is outdated.
+      - name: NuGet vulnerability scan
+        continue-on-error: true
+        run: |
+          dotnet restore src/AqtCoreFW.slnx
+          dotnet list src/AqtCoreFW.slnx package --vulnerable --include-transitive --format json > "$REPORT_DIR/nuget-vulnerable.tmp"
+          mv "$REPORT_DIR/nuget-vulnerable.tmp" "$REPORT_DIR/nuget-vulnerable.json"
+
+      - name: pnpm outdated and audit
+        continue-on-error: true
+        working-directory: web
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          # Both commands exit non-zero when they find something; the JSON body is what matters.
+          pnpm outdated --format json > "$REPORT_DIR/pnpm-outdated.json" || true
+          pnpm audit --json > "$REPORT_DIR/pnpm-audit.json" || true
+
+      - name: Build report
+        env:
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          node scripts/dependency-report/build-report.mjs \
+            --repo-root . \
+            --inputs "$REPORT_DIR" \
+            --issue-number "$ISSUE_NUMBER" \
+            --out "$REPORT_DIR/issue-body.md" \
+            --full-out "$REPORT_DIR/full-report.md" \
+            --json-out "$REPORT_DIR/report-data.json"
+
+      - name: Publish report to issue
+        env:
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: bash scripts/dependency-report/report-issue.sh publish "$ISSUE_NUMBER" "$REPORT_DIR/issue-body.md"
+
+      - name: Upload full report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-report
+          path: ${{ env.REPORT_DIR }}
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Flag failed run on the issue
+        if: failure() && steps.issue.outputs.number != ''
+        env:
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          bash scripts/dependency-report/report-issue.sh warn "$ISSUE_NUMBER" \
+            "⚠️ Run $RUN_URL lỗi; nội dung issue có thể là của lần chạy trước."

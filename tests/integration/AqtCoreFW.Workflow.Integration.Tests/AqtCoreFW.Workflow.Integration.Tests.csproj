@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>AqtCoreFW.Workflow.Integration.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="Testcontainers.Redis" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/host/AqtCoreFW.Api/AqtCoreFW.Api.csproj" />
+    <ProjectReference Include="../../shared/AqtCoreFW.Tests.SharedFixtures/AqtCoreFW.Tests.SharedFixtures.csproj" />
+    <ProjectReference Include="../../../src/modules/workflow/AqtCoreFW.Workflow.Application/AqtCoreFW.Workflow.Application.csproj" />
+    <ProjectReference Include="../../../src/modules/workflow/AqtCoreFW.Workflow.Domain/AqtCoreFW.Workflow.Domain.csproj" />
+    <!-- Infrastructure: WorkflowDbContext for direct DB seeding in keyset correctness tests -->
+    <ProjectReference Include="../../../src/modules/workflow/AqtCoreFW.Workflow.Infrastructure/AqtCoreFW.Workflow.Infrastructure.csproj" />
+    <!-- Identity Domain/Application: IEffectivePermissionService + EffectivePermissionSummary for permission stubbing -->
+    <ProjectReference Include="../../../src/modules/identity/AqtCoreFW.Identity.Domain/AqtCoreFW.Identity.Domain.csproj" />
+    <ProjectReference Include="../../../src/modules/identity/AqtCoreFW.Identity.Application/AqtCoreFW.Identity.Application.csproj" />
+  </ItemGroup>
+</Project>

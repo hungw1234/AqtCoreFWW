@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.ModuleName.Presentation</AssemblyName>
+    <RootNamespace>AqtCoreFW.ModuleName.Presentation</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="MediatR" />
+    <ProjectReference Include="..\AqtCoreFW.ModuleName.Application\AqtCoreFW.ModuleName.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+  </ItemGroup>
+</Project>

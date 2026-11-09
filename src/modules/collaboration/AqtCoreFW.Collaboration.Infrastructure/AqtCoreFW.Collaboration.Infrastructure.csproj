@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Collaboration.Infrastructure</AssemblyName>
+    <RootNamespace>AqtCoreFW.Collaboration.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AqtCoreFW.Collaboration.Integration.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <ProjectReference Include="..\AqtCoreFW.Collaboration.Application\AqtCoreFW.Collaboration.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Infrastructure\AqtCoreFW.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Chat.Contracts\AqtCoreFW.Chat.Contracts.csproj" />
+  </ItemGroup>
+</Project>

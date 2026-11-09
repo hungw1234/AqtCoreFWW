@@ -1,0 +1,55 @@
+# AqtCoreFW Web (frontend) Helm values — nginx serving the static Vite build.
+# Pattern mirrors the authserver chart (minimal: deployment/service/ingress).
+replicaCount: 1
+
+image:
+  repository: nexus.internal:5000/aqtcorefw/web
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - name: nexus-registry-secret
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: app.aqtcorefw.internal
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: aqtcorefw-web-tls
+      hosts:
+        - app.aqtcorefw.internal
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+podSecurityContext: {}
+
+# web/Dockerfile serves via nginx: probe the index document.
+livenessProbe:
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 5
+  periodSeconds: 15
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 3
+  periodSeconds: 10

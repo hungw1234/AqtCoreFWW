@@ -1,0 +1,10 @@
+# Exclude build output — forces clean dotnet restore inside container
+# Without this, obj/ dirs contain hardcoded Windows NuGet paths (D:\NuGetPackages)
+# that break Linux container builds (MSB3030)
+
+**/obj/
+**/bin/
+
+# OS artifacts
+.DS_Store
+Thumbs.db

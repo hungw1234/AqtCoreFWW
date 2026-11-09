@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.AssetManagement.Infrastructure</AssemblyName>
+    <RootNamespace>AqtCoreFW.AssetManagement.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <ProjectReference Include="..\AqtCoreFW.AssetManagement.Application\AqtCoreFW.AssetManagement.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Infrastructure\AqtCoreFW.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

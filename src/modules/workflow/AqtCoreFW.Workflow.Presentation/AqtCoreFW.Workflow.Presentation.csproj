@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Workflow.Presentation</AssemblyName>
+    <RootNamespace>AqtCoreFW.Workflow.Presentation</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Asp.Versioning.Mvc" />
+    <ProjectReference Include="..\AqtCoreFW.Workflow.Application\AqtCoreFW.Workflow.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+  </ItemGroup>
+</Project>

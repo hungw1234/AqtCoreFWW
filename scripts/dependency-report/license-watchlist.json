@@ -1,0 +1,48 @@
+{
+  "$comment": "Packages whose newer major versions moved to a commercial licence. Staying on the last free version means no more security patches, so the report lists each one as replace-needed. 'commercialFrom' is the first version under the commercial licence; 'kind: watch' means the licence is free under conditions that must be re-checked. Verify licence terms at 'licenseUrl' before acting.",
+  "packages": [
+    {
+      "match": "MediatR",
+      "ecosystem": "nuget",
+      "kind": "commercial",
+      "commercialFrom": "13.0.0",
+      "licenseUrl": "https://mediatr.io",
+      "replacements": [
+        "Mediator (martinothamar/Mediator, MIT, source generator; pipeline behavior đổi sang ValueTask)",
+        "Dispatcher nội bộ mỏng trong BuildingBlocks nếu chỉ dùng request/notification cơ bản"
+      ]
+    },
+    {
+      "match": "MassTransit",
+      "matchPrefix": true,
+      "ecosystem": "nuget",
+      "kind": "commercial",
+      "commercialFrom": "9.0.0",
+      "licenseUrl": "https://masstransit.io",
+      "replacements": [
+        "Wolverine (MIT, có outbox và RabbitMQ transport)",
+        "Rebus (MIT)",
+        "RabbitMQ.Client trực tiếp + outbox sẵn có của base"
+      ]
+    },
+    {
+      "match": "FluentAssertions",
+      "matchPrefix": true,
+      "ecosystem": "nuget",
+      "kind": "commercial",
+      "commercialFrom": "8.0.0",
+      "licenseUrl": "https://xceed.com/fluent-assertions-faq/",
+      "replacements": [
+        "AwesomeAssertions (fork Apache-2.0 của FluentAssertions 7, chủ yếu đổi namespace)",
+        "Shouldly (BSD)"
+      ]
+    },
+    {
+      "match": "QuestPDF",
+      "ecosystem": "nuget",
+      "kind": "watch",
+      "licenseUrl": "https://www.questpdf.com/license/",
+      "note": "Community license miễn phí có điều kiện doanh thu; kiểm lại điều kiện cho từng dự án dùng base."
+    }
+  ]
+}

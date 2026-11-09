@@ -1,0 +1,15 @@
+# Shell scripts MUST be LF — Alpine /bin/sh chokes on CRLF (`set -eu\r` = illegal option).
+# Affects infra/docker/vault-init.sh and any other *.sh executed inside containers.
+*.sh             text eol=lf
+*.bash           text eol=lf
+
+# Dockerfiles + compose are read by Linux tools — keep LF for portability.
+Dockerfile       text eol=lf
+*.dockerfile     text eol=lf
+docker-compose*.yml text eol=lf
+docker-compose*.yaml text eol=lf
+
+# Windows-only batch / PowerShell — let Git keep CRLF on Windows.
+*.bat            text eol=crlf
+*.cmd            text eol=crlf
+*.ps1            text eol=crlf

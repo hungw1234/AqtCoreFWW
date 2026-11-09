@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.SystemParams.Application</AssemblyName>
+    <RootNamespace>AqtCoreFW.SystemParams.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="StackExchange.Redis" />
+    <ProjectReference Include="..\AqtCoreFW.SystemParams.Domain\AqtCoreFW.SystemParams.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+  </ItemGroup>
+</Project>

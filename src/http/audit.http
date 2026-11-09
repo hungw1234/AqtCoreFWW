@@ -1,0 +1,143 @@
+### ==== AUDIT API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base routes:
+#   /api/v1/audit                    — audit logs + statistics
+#   /api/v1/admin/login-audit        — login attempt audit
+#   /api/v1/admin/rtbf-requests      — Right-to-be-Forgotten (Law 91/2025)
+#   /api/v1/admin/incidents          — security incident tracking (QĐ742)
+
+# ── Audit Logs ───────────────────────────────────────────────────────────────
+
+### Query audit logs (paged, optional filters)
+GET {{baseUrl}}/api/v1/audit/logs?page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Query audit logs with filters (date range + module + action)
+GET {{baseUrl}}/api/v1/audit/logs?tenantId={{tenantId}}&from=2026-01-01T00:00:00Z&to=2026-12-31T23:59:59Z&moduleName=Cases&action=Create&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Query audit logs for a specific user
+GET {{baseUrl}}/api/v1/audit/logs?userId=00000000-0000-0000-0000-000000000001&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Query audit logs for a specific resource
+GET {{baseUrl}}/api/v1/audit/logs?resourceType=Case&resourceId=00000000-0000-0000-0000-000000000001&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Get audit statistics (today/week/month counts, by action, by module)
+GET {{baseUrl}}/api/v1/audit/statistics
+Authorization: Bearer {{token}}
+
+###
+
+### Get audit statistics for a specific tenant
+GET {{baseUrl}}/api/v1/audit/statistics?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+# ── Login Audit ──────────────────────────────────────────────────────────────
+
+###
+
+### Query login attempts (all, paged)
+GET {{baseUrl}}/api/v1/admin/login-audit?page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Query failed login attempts in a date range
+GET {{baseUrl}}/api/v1/admin/login-audit?success=false&from=2026-03-01T00:00:00Z&to=2026-03-14T23:59:59Z&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Query login attempts for a specific user
+GET {{baseUrl}}/api/v1/admin/login-audit?userId=00000000-0000-0000-0000-000000000001&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+# ── RTBF Requests (Right-to-be-Forgotten) ───────────────────────────────────
+
+###
+
+### List RTBF requests (all statuses)
+GET {{baseUrl}}/api/v1/admin/rtbf-requests?page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### List pending RTBF requests for a tenant
+GET {{baseUrl}}/api/v1/admin/rtbf-requests?tenantId={{tenantId}}&status=Pending&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Process RTBF request (PII anonymization completed)
+POST {{baseUrl}}/api/v1/admin/rtbf-requests/00000000-0000-0000-0000-000000000001/process
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "processedBy": "00000000-0000-0000-0000-000000000001"
+}
+
+###
+
+### Reject RTBF request with reason
+POST {{baseUrl}}/api/v1/admin/rtbf-requests/00000000-0000-0000-0000-000000000001/reject
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "processedBy": "00000000-0000-0000-0000-000000000001",
+  "reason": "Request does not meet criteria under Law 91/2025 Art. 9 — data retention required for active legal proceedings."
+}
+
+# ── Security Incidents (QĐ742) ───────────────────────────────────────────────
+
+###
+
+### List security incidents (all)
+GET {{baseUrl}}/api/v1/admin/incidents?page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### List open high-severity incidents
+GET {{baseUrl}}/api/v1/admin/incidents?severity=High&status=Open&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Report a new security incident
+# Severity enum: Low, Medium, High, Critical
+POST {{baseUrl}}/api/v1/admin/incidents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "title": "Brute-force attempt detected on admin login",
+  "description": "50+ failed login attempts from IP 192.168.1.100 within 5 minutes.",
+  "severity": "High",
+  "reportedBy": "00000000-0000-0000-0000-000000000001"
+}
+
+###
+
+### Update incident status
+# Status enum: Open, Investigating, Resolved, Closed
+PATCH {{baseUrl}}/api/v1/admin/incidents/00000000-0000-0000-0000-000000000001/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "Resolved",
+  "mitigationNote": "IP blocked at WAF level. User accounts reviewed, no compromise found."
+}

@@ -1,0 +1,139 @@
+# promtool unit tests for the alert rules in
+# infra/helm/aqtcorefw/templates/prometheusrule.yaml
+#
+# The rules live in a Helm template, so they must be RENDERED BY HELM before they can be tested.
+# Render them with the release named `aqtcorefw`, then run promtool against the result. Neither helm
+# nor promtool needs to be installed — both run from Docker images. The whole procedure is one
+# command:
+#
+#   sh infra/prometheus/run-promtool-tests.sh
+#
+# (render via alpine/helm → extract spec.groups → promtool test rules from prom/prometheus.)
+# The rendered alert-rules.yml is a build artifact — gitignored; regenerate it, do not commit it.
+#
+# WHY THE RELEASE NAME IS PINNED TO `aqtcorefw`: the alert expressions select on
+# `service="{{ include "aqtcorefw.fullname" . }}"`, and `fullname` is `<release>-<chart>` UNLESS the
+# release name already contains the chart name (`_helpers.tpl`), in which case it collapses to the
+# release name alone. Releasing as `aqtcorefw` therefore renders `service="aqtcorefw"`, which is what
+# the fixtures below pin — correct BY CONSTRUCTION rather than by a hand-copied string. Render under
+# any other release name and these tests will fail, correctly: the fixture would no longer describe
+# the series the rules actually select. Do not "fix" that by editing the fixture; re-render.
+# Never test a hand-substituted rendering — a fixture matching a value Helm cannot produce passes
+# while asserting nothing.
+#
+# These tests pin BEHAVIOUR, not syntax: each alert is checked both for firing when it should and
+# for staying silent when it should not. The silent cases matter most — an alert that fires on
+# everything is as useless as one that never fires.
+
+rule_files:
+  - alert-rules.yml
+
+evaluation_interval: 1m
+
+tests:
+  # ── Availability ──────────────────────────────────────────────────────────
+  - interval: 1m
+    input_series:
+      - series: 'up{service="aqtcorefw",instance="10.0.0.1:8080"}'
+        values: '1 1 0 0 0 0'
+    alert_rule_test:
+      # Down for 3m, past the 2m `for` window.
+      - eval_time: 5m
+        alertname: AqtCoreFWDown
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              service: aqtcorefw
+              instance: 10.0.0.1:8080
+            exp_annotations:
+              summary: "AqtCoreFW target 10.0.0.1:8080 is down"
+              description: "Prometheus cannot scrape 10.0.0.1:8080. While this is firing, no in-app AlertRule can breach either — the evaluation job reaches its metrics through this same Prometheus, so treat in-app alert silence as uninformative until this clears."
+      # Healthy target must not fire.
+      - eval_time: 2m
+        alertname: AqtCoreFWDown
+        exp_alerts: []
+      # The watchdog fires even while everything is healthy — that is the whole point. Its absence
+      # at the receiver is the signal that the monitoring stack itself has died.
+      - eval_time: 1m
+        alertname: AqtCoreFWWatchdog
+        exp_alerts:
+          - exp_labels:
+              severity: none
+            exp_annotations:
+              summary: "Heartbeat — alerting pipeline is alive"
+              description: "Always firing by design. If this alert stops arriving at its receiver, the monitoring stack itself is down; nothing else in this file can tell you that."
+
+  # ── Alert evaluation ──────────────────────────────────────────────────────
+  # One continuously failing rule records two increments per run (a thrown query counts as both
+  # query_failed and no_data) and the job runs every minute, so ~10 accumulate per 5m window —
+  # comfortably past the threshold of 5.
+  - interval: 1m
+    input_series:
+      - series: 'alerting_evaluation_failed_total{reason="query_failed",source="scheduled"}'
+        values: '0+1x12'
+      - series: 'alerting_evaluation_failed_total{reason="no_data",source="scheduled"}'
+        values: '0+1x12'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: AqtCoreFWAlertEvaluationFailing
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+            exp_annotations:
+              summary: "AqtCoreFW alert evaluation is failing"
+              description: "Scheduled alert rule evaluation is failing, so rules can neither breach nor clear. Check the reason label — query_failed points at Prometheus reachability from the app, rule_error at a specific broken rule. Admin test presses are excluded by source."
+
+  # A flat counter means no NEW failures. It must stay silent no matter how large the absolute
+  # value is — the rule is built on increase(), and this pins that it stays that way.
+  - interval: 1m
+    input_series:
+      - series: 'alerting_evaluation_failed_total{reason="query_failed",source="scheduled"}'
+        values: '3 3 3 3 3 3 3 3 3 3 3 3 3'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: AqtCoreFWAlertEvaluationFailing
+        exp_alerts: []
+
+  # ── Notification delivery ─────────────────────────────────────────────────
+  - interval: 1m
+    input_series:
+      - series: 'alerting_notification_failed_total{channel="email",reason="delivery_failed",source="scheduled"}'
+        values: '0+1x12'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: AqtCoreFWAlertNotificationFailing
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+            exp_annotations:
+              summary: "AqtCoreFW alert notifications are not being delivered"
+              description: "Check the channel and reason labels. unconfigured means the relay was never seeded (Email__Host in Vault); delivery_failed means it was reachable but the send threw."
+
+  # Admin test presses record to the same counters with source="test". Both alert expressions select
+  # source="scheduled", so a burst of presses — well past either threshold — must stay silent. Without
+  # the source scoping, three presses would trip evaluation (GT 5) and one would trip notification
+  # (GT 0), paging ops about an evaluator that is working correctly.
+  - interval: 1m
+    input_series:
+      - series: 'alerting_evaluation_failed_total{reason="no_data",source="test"}'
+        values: '0+1x12'
+      - series: 'alerting_notification_failed_total{channel="email",reason="delivery_failed",source="test"}'
+        values: '0+1x12'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: AqtCoreFWAlertEvaluationFailing
+        exp_alerts: []
+      - eval_time: 12m
+        alertname: AqtCoreFWAlertNotificationFailing
+        exp_alerts: []
+
+  # A single failure that stopped recurring ages out of the 5m window and must stop alerting. The
+  # alert tracks an ongoing delivery problem, not a lifetime count of past ones.
+  - interval: 1m
+    input_series:
+      - series: 'alerting_notification_failed_total{channel="email",reason="delivery_failed",source="scheduled"}'
+        values: '0 1 1 1 1 1 1 1 1 1 1 1 1'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: AqtCoreFWAlertNotificationFailing
+        exp_alerts: []

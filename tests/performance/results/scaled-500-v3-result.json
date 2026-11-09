@@ -1,0 +1,6 @@
+{
+  "_note": "ARCHIVED 2026-05-01 (PR #71 cleanup) — stale baseline from Cases POST load test which returned 100% failures after Cases module removal. Kept for historical reference only.",
+  "tier": 500,
+  "endpoint": "DELETED — Cases module removed PR #71 2026-05-01",
+  "sloMet": false
+}

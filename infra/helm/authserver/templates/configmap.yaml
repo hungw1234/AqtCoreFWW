@@ -1,0 +1,10 @@
+{{/* AuthServer — ConfigMap for issuer URI */}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aqtcorefw-auth-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "authserver.name" . }}
+data:
+  issuer-uri: {{ .Values.config.issuerUri | quote }}

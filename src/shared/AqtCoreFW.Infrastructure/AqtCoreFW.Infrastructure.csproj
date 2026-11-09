@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Infrastructure</AssemblyName>
+    <RootNamespace>AqtCoreFW.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Enrichers.Environment" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
+    <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" />
+    <PackageReference Include="prometheus-net.AspNetCore" />
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" />
+    <PackageReference Include="AspNetCore.HealthChecks.Redis" />
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+    <PackageReference Include="Hangfire.Core" />
+    <PackageReference Include="Hangfire.SqlServer" />
+    <PackageReference Include="Hangfire.AspNetCore" />
+    <PackageReference Include="MassTransit" />
+    <PackageReference Include="MassTransit.RabbitMQ" />
+    <PackageReference Include="MassTransit.EntityFrameworkCore" />
+    <PackageReference Include="VaultSharp" />
+    <PackageReference Include="ClosedXML" />
+    <PackageReference Include="QuestPDF" />
+    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" />
+    <EmbeddedResource Include="Export\Fonts\NotoSans-Regular.ttf" LogicalName="NotoSans-Regular.ttf" />
+    <ProjectReference Include="..\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <!-- OrgUnit contract + DTOs consumed by the shared-Infra HttpOrgUnitModuleClient. Leaf edge:
+         OrgUnit.Contracts has no ProjectReferences, so this introduces no cycle. -->
+    <ProjectReference Include="..\AqtCoreFW.OrgUnit.Contracts\AqtCoreFW.OrgUnit.Contracts.csproj" />
+    <!-- IAlertEmailSender consumed by Alerting/AlertEvaluationJob. Leaf edge: Notification.Contracts
+         has no ProjectReferences, so this introduces no cycle even though Notifications.Infrastructure
+         (which implements the interface) references this project. -->
+    <ProjectReference Include="..\AqtCoreFW.Notification.Contracts\AqtCoreFW.Notification.Contracts.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,214 @@
+{
+	"FileUploadHandler": "http://localhost:8080/FileUploadHandler.aspx",
+	"SessionId": "",
+	"Files": [
+		{
+			"FileID": "5",
+			"FileName": "test1.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test2.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test3.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test4.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test6.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test7.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test8.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test9.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "10",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		},
+		{
+			"FileID": "5",
+			"FileName": "test5.pdf",
+			"URL": "https://cms.ca.gov.vn/files/test1.pdf"
+		}
+	]
+}
+
+
+{
+	"Encode":"RSA",
+	"SignerInfo":"ca@bcy.gov.vn",
+	"HashAlg": "SHA256",
+	"HashValues": [
+		{
+			"HashValue": "U09DQ0NELTAzMTA5ODAwMjExMw==",
+			"Signature": ""
+		},
+		{
+			"HashValue": "U09DQ0NELTAzMTA5ODAwMjExMw==",
+			"Signature": ""
+		},
+		{
+			"HashValue": "U09DQ0NELTAzMTA5ODAwMjExMw==",
+			"Signature": ""
+		},
+		{
+			"HashValue": "U09DQ0NELTAzMTA5ODAwMjExMw==",
+			"Signature": ""
+		},
+		{
+			"HashValue": "U09DQ0NELTAzMTA5ODAwMjExMw==",
+			"Signature": ""
+		},
+		{
+			"HashValue": "U09DQ0NELTAzMTA5ODAwMjExMw==",
+			"Signature": ""
+		}
+	]
+}

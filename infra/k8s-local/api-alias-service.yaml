@@ -1,0 +1,22 @@
+# Local-only alias: web/nginx.conf proxies /api/ to the compose service name `api:8080`
+# (nginx.conf:41), and nginx fails at startup when a static proxy_pass upstream does not
+# resolve. This Service gives the k8s cluster the same DNS name + port the compose
+# topology has, so the web image runs unchanged. Prod revisits this via ADR-008
+# (ingress same-origin routing) instead of an alias.
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: aqt-app
+spec:
+  # Selector matches the HELM RELEASE NAME `aqtcorefw` (scripts/k8s-local-reseed.sh
+  # installs under that name) — installing under another release name leaves this
+  # Service with zero endpoints and web/nginx answering 502. Known slack: the
+  # db-migrate hook pod carries the same labels and briefly matches while migrating
+  # (no readiness probe on job pods); transient and local-only.
+  selector:
+    app.kubernetes.io/name: aqtcorefw
+    app.kubernetes.io/instance: aqtcorefw
+  ports:
+    - port: 8080
+      targetPort: 8080

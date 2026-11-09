@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>AqtCoreFW.Forms.Integration.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <!-- MassTransit test harness for the cell-10 resilience fault-dimension tests (transient-retry) -->
+    <PackageReference Include="MassTransit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/host/AqtCoreFW.Api/AqtCoreFW.Api.csproj" />
+    <ProjectReference Include="../../shared/AqtCoreFW.Tests.SharedFixtures/AqtCoreFW.Tests.SharedFixtures.csproj" />
+    <ProjectReference Include="../../../src/modules/forms/AqtCoreFW.Forms.Application/AqtCoreFW.Forms.Application.csproj" />
+    <ProjectReference Include="../../../src/modules/forms/AqtCoreFW.Forms.Domain/AqtCoreFW.Forms.Domain.csproj" />
+    <ProjectReference Include="../../../src/modules/forms/AqtCoreFW.Forms.Infrastructure/AqtCoreFW.Forms.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\modules\identity\AqtCoreFW.Identity.Application\AqtCoreFW.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\modules\identity\AqtCoreFW.Identity.Domain\AqtCoreFW.Identity.Domain.csproj" />
+    <!-- Identity Infrastructure: IdentityDbContext + SigningRequest + SigningDocFlowRecord for seeding signing data -->
+    <ProjectReference Include="..\..\..\src\modules\identity\AqtCoreFW.Identity.Infrastructure\AqtCoreFW.Identity.Infrastructure.csproj" />
+    <!-- Files Domain: IFileStorageService for storage stub in signed-PDF download tests -->
+    <ProjectReference Include="..\..\..\src\modules\files\AqtCoreFW.Files.Domain\AqtCoreFW.Files.Domain.csproj" />
+    <!-- Workflow Domain + Infrastructure: seed a WorkflowTransitionAssignment pool + read WorkflowInstances
+         directly via EF for the H1 CrossModuleUnitOfWork post-commit-write repro (no HTTP endpoint exists
+         to seed a transition's handler pool — mirrors AqtCoreFW.Tests.Integration's WorkflowSeedHelpers). -->
+    <ProjectReference Include="..\..\..\src\modules\workflow\AqtCoreFW.Workflow.Domain\AqtCoreFW.Workflow.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\modules\workflow\AqtCoreFW.Workflow.Infrastructure\AqtCoreFW.Workflow.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

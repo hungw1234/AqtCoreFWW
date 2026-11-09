@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>AqtCoreFW.Audit.Integration.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <!-- Cell #10 resilience slice-3: IBus fault-injection for the broker-outage outbox-durability test.
+         Version is central-pinned in tests/Directory.Packages.props (same as Forms.Integration.Tests). -->
+    <PackageReference Include="MassTransit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/host/AqtCoreFW.Api/AqtCoreFW.Api.csproj" />
+    <ProjectReference Include="../../shared/AqtCoreFW.Tests.SharedFixtures/AqtCoreFW.Tests.SharedFixtures.csproj" />
+    <ProjectReference Include="../../../src/modules/audit/AqtCoreFW.Audit.Application/AqtCoreFW.Audit.Application.csproj" />
+    <ProjectReference Include="../../../src/modules/audit/AqtCoreFW.Audit.Domain/AqtCoreFW.Audit.Domain.csproj" />
+    <ProjectReference Include="../../../src/modules/audit/AqtCoreFW.Audit.Infrastructure/AqtCoreFW.Audit.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\modules\identity\AqtCoreFW.Identity.Application\AqtCoreFW.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\modules\identity\AqtCoreFW.Identity.Domain\AqtCoreFW.Identity.Domain.csproj" />
+  </ItemGroup>
+</Project>

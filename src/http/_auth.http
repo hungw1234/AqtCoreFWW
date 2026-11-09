@@ -1,0 +1,20 @@
+### ==== AUTH — ROPC Dev Flow (Development Only) ====
+# WARNING: password flow is dev-only, never expose in production
+# Requires AuthServer running at http://localhost:5001
+# Requires admin@test.vn seeded in DB (password: Admin@Test123!)
+# After success: copy access_token value to @token in _variables.http
+
+### Get access token
+POST {{authServerUrl}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=aqtcorefw-dev-ropc&client_secret=dev-secret-not-for-production&username=admin@test.vn&password=Admin@Test123!&scope=openid profile email roles api
+
+###
+
+### Refresh token
+# Paste your refresh_token from the login response below
+POST {{authServerUrl}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&client_id=aqtcorefw-dev-ropc&client_secret=dev-secret-not-for-production&refresh_token=PASTE_REFRESH_TOKEN_HERE

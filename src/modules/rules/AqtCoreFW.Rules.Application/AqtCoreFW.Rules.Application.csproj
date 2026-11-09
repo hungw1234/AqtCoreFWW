@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Rules.Application</AssemblyName>
+    <RootNamespace>AqtCoreFW.Rules.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Dapper" />
+    <ProjectReference Include="..\AqtCoreFW.Rules.Domain\AqtCoreFW.Rules.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+  </ItemGroup>
+</Project>

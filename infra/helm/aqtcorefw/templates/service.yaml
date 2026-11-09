@@ -1,0 +1,17 @@
+{{/* AqtCoreFW — Kubernetes Service (ClusterIP) */}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "aqtcorefw.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "aqtcorefw.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "aqtcorefw.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}

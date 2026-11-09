@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.AssetManagement.Presentation</AssemblyName>
+    <RootNamespace>AqtCoreFW.AssetManagement.Presentation</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="MediatR" />
+    <ProjectReference Include="..\AqtCoreFW.AssetManagement.Application\AqtCoreFW.AssetManagement.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+  </ItemGroup>
+</Project>

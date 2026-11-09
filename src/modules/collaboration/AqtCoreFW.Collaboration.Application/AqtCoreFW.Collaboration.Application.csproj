@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Collaboration.Application</AssemblyName>
+    <RootNamespace>AqtCoreFW.Collaboration.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Dapper" />
+    <ProjectReference Include="..\AqtCoreFW.Collaboration.Domain\AqtCoreFW.Collaboration.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Identity.Contracts\AqtCoreFW.Identity.Contracts.csproj" />
+  </ItemGroup>
+</Project>

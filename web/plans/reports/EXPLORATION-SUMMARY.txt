@@ -1,0 +1,182 @@
+================================================================================
+EXPLORATION SUMMARY: AqtCoreFW E2E Test Inventory for 17 Modules
+Generated: 2026-04-06
+================================================================================
+
+SCOPE COMPLETED:
+✓ Task 1: Backend API endpoints per module (62 controllers, 304 endpoints)
+✓ Task 2: Existing E2E test inventory (52 .spec.ts files, 234 tests)
+✓ Task 3: FE route → module mapping (50+ routes mapped)
+
+================================================================================
+OVERVIEW
+================================================================================
+
+Modules: 17 | Controllers: 62 | Endpoints: 304 | E2E Tests: 234 (77%)
+
+Test Type Distribution:
+  - API-only tests:       134 (57%)
+  - Browser tests:         81 (35%)
+  - Cross-module tests:    21 (9%)
+  - WebSocket tests:        0 (0% GAP)
+
+================================================================================
+CRITICAL FINDINGS
+================================================================================
+
+5 UNTESTED MODULES (0 tests each):
+  1. collaboration (10 endpoints)  — Chat/messaging completely untested
+  2. rules (11 endpoints)          — Business rules engine untested
+  3. search (7 endpoints)          — Search feature untested
+  4. signature (7 endpoints)       — Digital signature untested
+  5. ai (13 endpoints)             — AI/copilot features untested
+
+TOTAL UNTESTED ENDPOINTS: 48 (16% of all endpoints)
+
+LOW COVERAGE MODULES (<30%):
+  - integration: 2/14 tests (14%)
+  - masterdata: 6/25 tests (24%)
+  - cases: 3/11 tests (27%)
+
+GAPS IN WELL-TESTED MODULES:
+  - identity (40/64 tests): Missing ABAC/SOD/Policy builder UI
+  - workflow (37/30 tests): Missing designer drag & drop UI
+  - forms (25/31 tests): Missing template builder conditional logic
+  - files (8/13 tests): Missing upload UI and preview rendering
+
+================================================================================
+DETAILED INVENTORY
+================================================================================
+
+FILE: Explore-260406-1131-e2e-inventory.md (356 lines, comprehensive)
+
+CONTENTS:
+- Executive summary with metrics
+- Module coverage table (all 17 modules)
+- Critical gaps by priority tier (Tier 1, 2, 3)
+- Test type distribution breakdown
+- Detailed module inventory with:
+  * Controllers and endpoint counts
+  * Current test files and test counts
+  * Specific gaps and missing features
+  * Frontend route mappings
+  * Business impact assessment
+
+MODULE-BY-MODULE BREAKDOWN:
+
+LARGEST MODULES:
+  identity:  17 controllers, 64 endpoints, 40 tests (62%)
+  workflow:   4 controllers, 30 endpoints, 37 tests (123%)
+
+BEST TESTED:
+  audit:     4 controllers, 13 endpoints, 13 tests (100%)
+  systemparams: 3 controllers, 11 endpoints, 23 tests (209%)
+
+WORST TESTED:
+  ai:        4 controllers, 13 endpoints,  0 tests (0%)
+  collaboration: 2 controllers, 10 endpoints, 0 tests (0%)
+  rules:     3 controllers, 11 endpoints,  0 tests (0%)
+  search:    2 controllers,  7 endpoints,  0 tests (0%)
+  signature: 1 controller,   7 endpoints,  0 tests (0%)
+
+================================================================================
+RECOMMENDED ACTION PLAN
+================================================================================
+
+PHASE 1 (WEEKS 1-2): Close Zero-Test Modules
+  Priority 1: collaboration.spec.ts (10+ tests)
+  Priority 2: rules.spec.ts (10+ tests)
+  Priority 3: search.spec.ts (8+ tests)
+  Priority 4: signature.spec.ts (8+ tests)
+  Priority 5: ai.spec.ts (10+ tests)
+
+PHASE 2 (WEEKS 3-4): Strengthen UI Coverage
+  1. workflow-designer.spec.ts
+  2. forms-template-builder.spec.ts
+  3. identity-access-control.spec.ts
+  4. masterdata-hierarchy.spec.ts
+
+PHASE 3 (WEEKS 5-6): WebSocket & Integration Testing
+  1. websocket-real-time.spec.ts
+  2. file-upload-ui.spec.ts
+  3. integration-webhooks.spec.ts
+
+PHASE 4 (WEEKS 7+): Edge Cases & Performance
+  1. Concurrent operations
+  2. Large dataset performance
+  3. Error recovery workflows
+  4. Bulk operations (import/export)
+
+ESTIMATED EFFORT:
+  Phase 1: 100 tests × 30 min/test = 50 hours
+  Phase 2: 50+ tests × 30 min/test = 25 hours
+  Phase 3: 30+ tests × 45 min/test = 22.5 hours
+  Phase 4: 40+ tests × 45 min/test = 30 hours
+  ────────────────────────────────────────
+  TOTAL: ~127 hours of test development
+
+================================================================================
+KEY INSIGHTS
+================================================================================
+
+1. API Coverage Strong (77% overall), UI Coverage Weak
+   - 57% API tests vs 35% browser tests
+   - Many modules lack UI automation tests
+   - Designer/builder patterns completely untested
+
+2. Real-Time Features Untested (0 WebSocket tests)
+   - Notifications, chat, workflow push untested
+   - No SignalR/WebSocket protocol validation
+   - Critical for modern UX features
+
+3. Module Coverage Uneven
+   - 5 modules at 0% (high risk)
+   - 8 modules at 60-67% (mid risk)
+   - 2 modules at 100%+ (over-tested)
+
+4. Integration Gaps
+   - Webhook delivery/retry untested
+   - External system integration weak
+   - Partner/contract workflows untested
+
+5. Complex Features Missing
+   - Workflow designer (visual editor)
+   - Form conditional logic (dynamic fields)
+   - ABAC/SOD policy builders (admin tools)
+   - Tree hierarchy builders (org structure)
+
+================================================================================
+TEST INFRASTRUCTURE
+================================================================================
+
+Framework: Playwright (Chrome automation)
+Pattern: Page Object Model
+Fixtures: apiContext (API), authedPage (browser)
+Auth: Service account via authenticateUser()
+Data Isolation: Unique seeds + API teardown
+Concurrency: Parallel execution per test file
+CI/CD: GitHub Actions (assumed)
+
+INFRASTRUCTURE GAPS:
+  - No WebSocket protocol testing setup
+  - No load/performance test baselines
+  - No visual regression testing
+  - No accessibility-focused tests (axe-audit exists but limited)
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Review complete inventory: Explore-260406-1131-e2e-inventory.md
+2. Prioritize Phase 1 modules for immediate testing
+3. Plan WebSocket test framework setup
+4. Allocate resources for 127 hours of test development
+5. Schedule module owners for requirement validation
+6. Establish test coverage metrics/CI gates
+
+================================================================================
+REPORT LOCATION
+================================================================================
+
+/c/AqtCoreFW/web/plans/reports/Explore-260406-1131-e2e-inventory.md
+

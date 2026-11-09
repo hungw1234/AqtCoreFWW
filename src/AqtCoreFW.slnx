@@ -1,0 +1,185 @@
+<Solution>
+  <Folder Name="/host/">
+    <Project Path="host/AqtCoreFW.Api/AqtCoreFW.Api.csproj" />
+    <Project Path="host/AqtCoreFW.AuthServer/AqtCoreFW.AuthServer.csproj" />
+  </Folder>
+  <Folder Name="/modules/" />
+  <Folder Name="/modules/integration/">
+    <Project Path="modules/integration/AqtCoreFW.Integration.Domain/AqtCoreFW.Integration.Domain.csproj" />
+    <Project Path="modules/integration/AqtCoreFW.Integration.Application/AqtCoreFW.Integration.Application.csproj" />
+    <Project Path="modules/integration/AqtCoreFW.Integration.Infrastructure/AqtCoreFW.Integration.Infrastructure.csproj" />
+    <Project Path="modules/integration/AqtCoreFW.Integration.Presentation/AqtCoreFW.Integration.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/forms/">
+    <Project Path="modules/forms/AqtCoreFW.Forms.Domain/AqtCoreFW.Forms.Domain.csproj" />
+    <Project Path="modules/forms/AqtCoreFW.Forms.Application/AqtCoreFW.Forms.Application.csproj" />
+    <Project Path="modules/forms/AqtCoreFW.Forms.Infrastructure/AqtCoreFW.Forms.Infrastructure.csproj" />
+    <Project Path="modules/forms/AqtCoreFW.Forms.Presentation/AqtCoreFW.Forms.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/workflow/">
+    <Project Path="modules/workflow/AqtCoreFW.Workflow.Domain/AqtCoreFW.Workflow.Domain.csproj" />
+    <Project Path="modules/workflow/AqtCoreFW.Workflow.Application/AqtCoreFW.Workflow.Application.csproj" />
+    <Project Path="modules/workflow/AqtCoreFW.Workflow.Infrastructure/AqtCoreFW.Workflow.Infrastructure.csproj" />
+    <Project Path="modules/workflow/AqtCoreFW.Workflow.Presentation/AqtCoreFW.Workflow.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/files/">
+    <Project Path="modules/files/AqtCoreFW.Files.Domain/AqtCoreFW.Files.Domain.csproj" />
+    <Project Path="modules/files/AqtCoreFW.Files.Application/AqtCoreFW.Files.Application.csproj" />
+    <Project Path="modules/files/AqtCoreFW.Files.Infrastructure/AqtCoreFW.Files.Infrastructure.csproj" />
+    <Project Path="modules/files/AqtCoreFW.Files.Presentation/AqtCoreFW.Files.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/masterdata/">
+    <Project Path="modules/masterdata/AqtCoreFW.MasterData.Domain/AqtCoreFW.MasterData.Domain.csproj" />
+    <Project Path="modules/masterdata/AqtCoreFW.MasterData.Application/AqtCoreFW.MasterData.Application.csproj" />
+    <Project Path="modules/masterdata/AqtCoreFW.MasterData.Infrastructure/AqtCoreFW.MasterData.Infrastructure.csproj" />
+    <Project Path="modules/masterdata/AqtCoreFW.MasterData.Presentation/AqtCoreFW.MasterData.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/organization/">
+    <Project Path="modules/organization/AqtCoreFW.Organization.Domain/AqtCoreFW.Organization.Domain.csproj" />
+    <Project Path="modules/organization/AqtCoreFW.Organization.Application/AqtCoreFW.Organization.Application.csproj" />
+    <Project Path="modules/organization/AqtCoreFW.Organization.Infrastructure/AqtCoreFW.Organization.Infrastructure.csproj" />
+    <Project Path="modules/organization/AqtCoreFW.Organization.Presentation/AqtCoreFW.Organization.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/systemparams/">
+    <Project Path="modules/systemparams/AqtCoreFW.SystemParams.Domain/AqtCoreFW.SystemParams.Domain.csproj" />
+    <Project Path="modules/systemparams/AqtCoreFW.SystemParams.Application/AqtCoreFW.SystemParams.Application.csproj" />
+    <Project Path="modules/systemparams/AqtCoreFW.SystemParams.Infrastructure/AqtCoreFW.SystemParams.Infrastructure.csproj" />
+    <Project Path="modules/systemparams/AqtCoreFW.SystemParams.Presentation/AqtCoreFW.SystemParams.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/rules/">
+    <Project Path="modules/rules/AqtCoreFW.Rules.Domain/AqtCoreFW.Rules.Domain.csproj" />
+    <Project Path="modules/rules/AqtCoreFW.Rules.Application/AqtCoreFW.Rules.Application.csproj" />
+    <Project Path="modules/rules/AqtCoreFW.Rules.Infrastructure/AqtCoreFW.Rules.Infrastructure.csproj" />
+    <Project Path="modules/rules/AqtCoreFW.Rules.Presentation/AqtCoreFW.Rules.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/businessprocess/">
+    <Project Path="modules/businessprocess/AqtCoreFW.BusinessProcess.Domain/AqtCoreFW.BusinessProcess.Domain.csproj" />
+    <Project Path="modules/businessprocess/AqtCoreFW.BusinessProcess.Application/AqtCoreFW.BusinessProcess.Application.csproj" />
+    <Project Path="modules/businessprocess/AqtCoreFW.BusinessProcess.Infrastructure/AqtCoreFW.BusinessProcess.Infrastructure.csproj" />
+    <Project Path="modules/businessprocess/AqtCoreFW.BusinessProcess.Presentation/AqtCoreFW.BusinessProcess.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/collaboration/">
+    <Project Path="modules/collaboration/AqtCoreFW.Collaboration.Domain/AqtCoreFW.Collaboration.Domain.csproj" />
+    <Project Path="modules/collaboration/AqtCoreFW.Collaboration.Application/AqtCoreFW.Collaboration.Application.csproj" />
+    <Project Path="modules/collaboration/AqtCoreFW.Collaboration.Infrastructure/AqtCoreFW.Collaboration.Infrastructure.csproj" />
+    <Project Path="modules/collaboration/AqtCoreFW.Collaboration.Presentation/AqtCoreFW.Collaboration.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/identity/">
+    <Project Path="modules/identity/AqtCoreFW.Identity.Domain/AqtCoreFW.Identity.Domain.csproj" />
+    <Project Path="modules/identity/AqtCoreFW.Identity.Application/AqtCoreFW.Identity.Application.csproj" />
+    <Project Path="modules/identity/AqtCoreFW.Identity.Infrastructure/AqtCoreFW.Identity.Infrastructure.csproj" />
+    <Project Path="modules/identity/AqtCoreFW.Identity.Presentation/AqtCoreFW.Identity.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/ai/">
+    <Project Path="modules/ai/AqtCoreFW.Ai.Application/AqtCoreFW.Ai.Application.csproj" />
+    <Project Path="modules/ai/AqtCoreFW.Ai.Domain/AqtCoreFW.Ai.Domain.csproj" />
+    <Project Path="modules/ai/AqtCoreFW.Ai.Infrastructure/AqtCoreFW.Ai.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/modules/audit/">
+    <Project Path="modules/audit/AqtCoreFW.Audit.Domain/AqtCoreFW.Audit.Domain.csproj" />
+    <Project Path="modules/audit/AqtCoreFW.Audit.Application/AqtCoreFW.Audit.Application.csproj" />
+    <Project Path="modules/audit/AqtCoreFW.Audit.Infrastructure/AqtCoreFW.Audit.Infrastructure.csproj" />
+    <Project Path="modules/audit/AqtCoreFW.Audit.Presentation/AqtCoreFW.Audit.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/reporting/">
+    <Project Path="modules/reporting/AqtCoreFW.Reporting.Domain/AqtCoreFW.Reporting.Domain.csproj" />
+    <Project Path="modules/reporting/AqtCoreFW.Reporting.Application/AqtCoreFW.Reporting.Application.csproj" />
+    <Project Path="modules/reporting/AqtCoreFW.Reporting.Infrastructure/AqtCoreFW.Reporting.Infrastructure.csproj" />
+    <Project Path="modules/reporting/AqtCoreFW.Reporting.Presentation/AqtCoreFW.Reporting.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/modules/notifications/">
+    <Project Path="modules/notifications/AqtCoreFW.Notifications.Application/AqtCoreFW.Notifications.Application.csproj" />
+    <Project Path="modules/notifications/AqtCoreFW.Notifications.Domain/AqtCoreFW.Notifications.Domain.csproj" />
+    <Project Path="modules/notifications/AqtCoreFW.Notifications.Infrastructure/AqtCoreFW.Notifications.Infrastructure.csproj" />
+    <Project Path="modules/notifications/AqtCoreFW.Notifications.Presentation/AqtCoreFW.Notifications.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/AqtCoreFW.Infrastructure/AqtCoreFW.Infrastructure.csproj" />
+    <Project Path="shared/AqtCoreFW.SharedKernel.Contracts/AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.SharedKernel/AqtCoreFW.SharedKernel.csproj" />
+    <Project Path="shared/AqtCoreFW.Audit.Contracts/AqtCoreFW.Audit.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.Chat.Contracts/AqtCoreFW.Chat.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.Consent.Contracts/AqtCoreFW.Consent.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.Files.Contracts/AqtCoreFW.Files.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.Forms.Contracts/AqtCoreFW.Forms.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.Identity.Contracts/AqtCoreFW.Identity.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.Notification.Contracts/AqtCoreFW.Notification.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.OrgUnit.Contracts/AqtCoreFW.OrgUnit.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.RuleEngine.Contracts/AqtCoreFW.RuleEngine.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.Workflow.Contracts/AqtCoreFW.Workflow.Contracts.csproj" />
+    <Project Path="shared/AqtCoreFW.BusinessProcess.Contracts/AqtCoreFW.BusinessProcess.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AqtCoreFW.Tests.Integration/AqtCoreFW.Tests.Integration.csproj" />
+  </Folder>
+  <Project Path="../tests/shared/AqtCoreFW.Tests.SharedFixtures/AqtCoreFW.Tests.SharedFixtures.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Audit.Integration.Tests/AqtCoreFW.Audit.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.BusinessProcess.Integration.Tests/AqtCoreFW.BusinessProcess.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Concurrency.Tests/AqtCoreFW.Concurrency.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Files.Integration.Tests/AqtCoreFW.Files.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Forms.Integration.Tests/AqtCoreFW.Forms.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Notifications.Integration.Tests/AqtCoreFW.Notifications.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Organization.Integration.Tests/AqtCoreFW.Organization.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Resilience.Tests/AqtCoreFW.Resilience.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.TenantIsolation.Tests/AqtCoreFW.TenantIsolation.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Ai.Infrastructure.Tests/AqtCoreFW.Ai.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Audit.Application.Tests/AqtCoreFW.Audit.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Forms.Application.Tests/AqtCoreFW.Forms.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Identity.Application.Tests/AqtCoreFW.Identity.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Notifications.Application.Tests/AqtCoreFW.Notifications.Application.Tests.csproj" />
+  <Project Path="../tests/contracts/AqtCoreFW.Tests.Contracts/AqtCoreFW.Tests.Contracts.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Reporting.Application.Tests/AqtCoreFW.Reporting.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Reporting.Domain.Tests/AqtCoreFW.Reporting.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Files.Domain.Tests/AqtCoreFW.Files.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Audit.Domain.Tests/AqtCoreFW.Audit.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Files.Application.Tests/AqtCoreFW.Files.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Files.Infrastructure.Tests/AqtCoreFW.Files.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Notifications.Infrastructure.Tests/AqtCoreFW.Notifications.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Notifications.Domain.Tests/AqtCoreFW.Notifications.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Organization.Tests/AqtCoreFW.Organization.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Reporting.Infrastructure.Tests/AqtCoreFW.Reporting.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.SharedKernel.Tests/AqtCoreFW.SharedKernel.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.SystemParams.Tests/AqtCoreFW.SystemParams.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.MasterData.Tests/AqtCoreFW.MasterData.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Workflow.Infrastructure.Tests/AqtCoreFW.Workflow.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Rules.Domain.Tests/AqtCoreFW.Rules.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Rules.Application.Tests/AqtCoreFW.Rules.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Rules.Infrastructure.Tests/AqtCoreFW.Rules.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Collaboration.Domain.Tests/AqtCoreFW.Collaboration.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Collaboration.Application.Tests/AqtCoreFW.Collaboration.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Identity.Domain.Tests/AqtCoreFW.Identity.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Identity.Infrastructure.Tests/AqtCoreFW.Identity.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Workflow.Domain.Tests/AqtCoreFW.Workflow.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Workflow.Application.Tests/AqtCoreFW.Workflow.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Audit.Infrastructure.Tests/AqtCoreFW.Audit.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Forms.Domain.Tests/AqtCoreFW.Forms.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Forms.Infrastructure.Tests/AqtCoreFW.Forms.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.BusinessProcess.Domain.Tests/AqtCoreFW.BusinessProcess.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.BusinessProcess.Application.Tests/AqtCoreFW.BusinessProcess.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.BusinessProcess.Infrastructure.Tests/AqtCoreFW.BusinessProcess.Infrastructure.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Ai.Application.Tests/AqtCoreFW.Ai.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.AssetManagement.Application.Tests/AqtCoreFW.AssetManagement.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.AssetManagement.Domain.Tests/AqtCoreFW.AssetManagement.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Contracts.Tests/AqtCoreFW.Contracts.Tests.csproj" />
+  <Project Path="../tests/architecture/AqtCoreFW.Architecture.Tests/AqtCoreFW.Architecture.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Cache.Integration.Tests/AqtCoreFW.Cache.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Installation.Tests/AqtCoreFW.Installation.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Messaging.Integration.Tests/AqtCoreFW.Messaging.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.BackgroundJobs.Integration.Tests/AqtCoreFW.BackgroundJobs.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Identity.Integration.Tests/AqtCoreFW.Identity.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Workflow.Integration.Tests/AqtCoreFW.Workflow.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Collaboration.Integration.Tests/AqtCoreFW.Collaboration.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Integration.Integration.Tests/AqtCoreFW.Integration.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Reporting.Integration.Tests/AqtCoreFW.Reporting.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Rules.Integration.Tests/AqtCoreFW.Rules.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Ai.Integration.Tests/AqtCoreFW.Ai.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.AssetManagement.Integration.Tests/AqtCoreFW.AssetManagement.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.MasterData.Integration.Tests/AqtCoreFW.MasterData.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Startup.SmokeTests/AqtCoreFW.Startup.SmokeTests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.SystemParams.Integration.Tests/AqtCoreFW.SystemParams.Integration.Tests.csproj" />
+  <Project Path="../tests/integration/AqtCoreFW.Security.Tests/AqtCoreFW.Security.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Infrastructure.Extensions.Tests/AqtCoreFW.Infrastructure.Extensions.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Integration.Domain.Tests/AqtCoreFW.Integration.Domain.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.Integration.Application.Tests/AqtCoreFW.Integration.Application.Tests.csproj" />
+  <Project Path="../tests/unit/AqtCoreFW.AuthServer.Tests/AqtCoreFW.AuthServer.Tests.csproj" />
+</Solution>

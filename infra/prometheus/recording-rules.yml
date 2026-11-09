@@ -1,0 +1,83 @@
+groups:
+  # ── SLO Recording Rules — AqtCoreFW ──────────────────────────────────────────
+  # Pre-computed metrics for dashboards + alerting.
+  # Evaluated every 30s; stored as new time series for fast query.
+
+  - name: aqtcorefw_slo_availability
+    interval: 30s
+    rules:
+      # 5-minute request success rate (2xx + 3xx)
+      - record: aqtcorefw:http_success_rate:rate5m
+        expr: |
+          sum(rate(http_requests_received_total{app="aqtcorefw",code!~"5.."}[5m]))
+          / sum(rate(http_requests_received_total{app="aqtcorefw"}[5m]))
+
+      # 30-day availability (SLO-01 window)
+      - record: aqtcorefw:http_success_rate:rate30d
+        expr: |
+          sum(rate(http_requests_received_total{app="aqtcorefw",code!~"5.."}[30d]))
+          / sum(rate(http_requests_received_total{app="aqtcorefw"}[30d]))
+
+      # 5xx error rate (SLO-03)
+      - record: aqtcorefw:http_error_rate_5xx:rate5m
+        expr: |
+          sum(rate(http_requests_received_total{app="aqtcorefw",code=~"5.."}[5m]))
+          / sum(rate(http_requests_received_total{app="aqtcorefw"}[5m]))
+
+      # Total request rate (req/s)
+      - record: aqtcorefw:http_request_rate:rate5m
+        expr: |
+          sum(rate(http_requests_received_total{app="aqtcorefw"}[5m]))
+
+  - name: aqtcorefw_slo_latency
+    interval: 30s
+    rules:
+      # API latency percentiles (SLO-02) — in milliseconds
+      - record: aqtcorefw:http_request_duration_ms:p50_rate5m
+        expr: |
+          histogram_quantile(0.50,
+            rate(http_request_duration_seconds_bucket{app="aqtcorefw"}[5m])
+          ) * 1000
+
+      - record: aqtcorefw:http_request_duration_ms:p95_rate5m
+        expr: |
+          histogram_quantile(0.95,
+            rate(http_request_duration_seconds_bucket{app="aqtcorefw"}[5m])
+          ) * 1000
+
+      - record: aqtcorefw:http_request_duration_ms:p99_rate5m
+        expr: |
+          histogram_quantile(0.99,
+            rate(http_request_duration_seconds_bucket{app="aqtcorefw"}[5m])
+          ) * 1000
+
+  - name: aqtcorefw_slo_error_budget
+    interval: 5m
+    rules:
+      # Remaining error budget (fraction of 0.5% monthly allowance consumed)
+      # 1.0 = full budget remaining; 0.0 = budget exhausted
+      - record: aqtcorefw:error_budget_remaining:ratio30d
+        expr: |
+          1 - (
+            (1 - aqtcorefw:http_success_rate:rate30d)
+            / (1 - 0.995)
+          )
+
+      # Error budget burn rate (multi-window for alerting)
+      - record: aqtcorefw:error_budget_burn_rate:rate1h
+        expr: |
+          (1 - aqtcorefw:http_success_rate:rate5m) / (1 - 0.995)
+
+  - name: aqtcorefw_background_jobs
+    interval: 60s
+    rules:
+      # Outbox processor success rate (SLO-04)
+      - record: aqtcorefw:outbox_success_rate:rate1h
+        expr: |
+          sum(rate(outbox_messages_processed_total{app="aqtcorefw",status="success"}[1h]))
+          / sum(rate(outbox_messages_processed_total{app="aqtcorefw"}[1h]))
+
+      # Retry exhaustion queue depth
+      - record: aqtcorefw:outbox_dead_letter_depth
+        expr: |
+          sum(outbox_dead_letter_count{app="aqtcorefw"})

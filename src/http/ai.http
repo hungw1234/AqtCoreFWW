@@ -1,0 +1,92 @@
+### ==== AI API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base route: /api/v1/ai
+#
+# Endpoints:
+#   POST /api/v1/ai/chat                      — full response (non-streaming)
+#   POST /api/v1/ai/chat/stream               — SSE streaming (text/event-stream)
+#   POST /api/v1/ai/documents/ingest          — chunk + embed + index document text
+#   GET  /api/v1/ai/chat/{sessionId}/history  — paginated chat history
+#
+# TenantId resolved from: JWT "tenantId" claim → X-Tenant-Id header
+# Classification enum: Public, Internal, Confidential, Secret
+
+# ── Chat (non-streaming) ─────────────────────────────────────────────────────
+
+### Send message, receive full AI response
+POST {{baseUrl}}/api/v1/ai/chat
+Authorization: Bearer {{token}}
+X-Tenant-Id: {{tenantId}}
+Content-Type: application/json
+
+{
+  "message": "Tóm tắt các hồ sơ đất đai đang chờ xử lý trong tuần này",
+  "sessionId": null,
+  "classification": "Internal"
+}
+
+###
+
+### Continue an existing chat session
+POST {{baseUrl}}/api/v1/ai/chat
+Authorization: Bearer {{token}}
+X-Tenant-Id: {{tenantId}}
+Content-Type: application/json
+
+{
+  "message": "Cho tôi xem chi tiết hồ sơ có mã ABC12345",
+  "sessionId": "00000000-0000-0000-0000-000000000001",
+  "classification": "Internal"
+}
+
+# ── Chat (SSE Streaming) ─────────────────────────────────────────────────────
+
+###
+
+### Stream chat response as Server-Sent Events
+# Response: Content-Type: text/event-stream
+# Each event: "data: {token}\n\n"
+# Final event: "data: [DONE]\n\n"
+# Note: VS Code REST Client shows raw SSE text; use a browser EventSource for real streaming UX
+POST {{baseUrl}}/api/v1/ai/chat/stream
+Authorization: Bearer {{token}}
+X-Tenant-Id: {{tenantId}}
+Content-Type: application/json
+
+{
+  "message": "Giải thích quy trình phê duyệt hồ sơ đất đai theo QĐ742",
+  "classification": "Internal"
+}
+
+# ── Document Ingestion ───────────────────────────────────────────────────────
+
+###
+
+### Ingest document text into tenant vector store (chunk + embed + index)
+# FileId: references a file in the Files module (must be Available status)
+# Text: full extracted text of the document
+POST {{baseUrl}}/api/v1/ai/documents/ingest
+Authorization: Bearer {{token}}
+X-Tenant-Id: {{tenantId}}
+Content-Type: application/json
+
+{
+  "fileId": "00000000-0000-0000-0000-000000000001",
+  "text": "Quyết định số 742/QĐ-TTg ngày 26 tháng 6 năm 2024 về việc phê duyệt Đề án phát triển ứng dụng dữ liệu về dân cư, định danh và xác thực điện tử phục vụ chuyển đổi số quốc gia giai đoạn 2022-2025..."
+}
+
+# ── Chat History ─────────────────────────────────────────────────────────────
+
+###
+
+### Get paginated chat history for a session
+GET {{baseUrl}}/api/v1/ai/chat/00000000-0000-0000-0000-000000000001/history?page=1&pageSize=50
+Authorization: Bearer {{token}}
+X-Tenant-Id: {{tenantId}}
+
+###
+
+### Get earlier messages in a long session
+GET {{baseUrl}}/api/v1/ai/chat/00000000-0000-0000-0000-000000000001/history?page=2&pageSize=50
+Authorization: Bearer {{token}}
+X-Tenant-Id: {{tenantId}}

@@ -1,0 +1,88 @@
+### ==== FORMS API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base routes:
+#   /api/v1/forms/templates    — form template CRUD + publish lifecycle (Admin)
+#   /api/v1/forms/submissions  — form submission + query (Authenticated)
+#
+# Template lifecycle: Draft (inactive) → Published (active, accepts submissions)
+
+# ── Form Templates ───────────────────────────────────────────────────────────
+
+### List active form templates for a tenant (paged)
+GET {{baseUrl}}/api/v1/forms/templates?tenantId={{tenantId}}&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Get single form template schema by ID
+GET {{baseUrl}}/api/v1/forms/templates/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Create form template (starts inactive — requires publish before accepting submissions)
+# Admin/SystemAdmin only
+# SchemaJson: JSON Schema string defining the form fields
+POST {{baseUrl}}/api/v1/forms/templates
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "name": "Land Dispute Application Form",
+  "nameVi": "Mẫu Đơn Khiếu Nại Đất Đai",
+  "schemaJson": "{\"type\":\"object\",\"properties\":{\"plotNumber\":{\"type\":\"string\",\"title\":\"Số thửa đất\"},\"area\":{\"type\":\"number\",\"title\":\"Diện tích (m²)\"},\"notes\":{\"type\":\"string\",\"title\":\"Ghi chú\"}},\"required\":[\"plotNumber\",\"area\"]}",
+  "createdBy": "00000000-0000-0000-0000-000000000001"
+}
+
+###
+
+### Publish form template (makes it active for submissions)
+# Admin/SystemAdmin only
+POST {{baseUrl}}/api/v1/forms/templates/00000000-0000-0000-0000-000000000001/publish
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "updatedBy": "00000000-0000-0000-0000-000000000001"
+}
+
+# ── Form Submissions ─────────────────────────────────────────────────────────
+
+###
+
+### Submit data against an active form template
+# Data: key-value map matching the template's JSON Schema properties
+POST {{baseUrl}}/api/v1/forms/submissions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "formTemplateId": "00000000-0000-0000-0000-000000000001",
+  "submittedBy": "00000000-0000-0000-0000-000000000002",
+  "data": {
+    "plotNumber": "123",
+    "area": "500",
+    "notes": "Adjacent to main road, disputed boundary on north side."
+  }
+}
+
+###
+
+### Get single form submission by ID
+GET {{baseUrl}}/api/v1/forms/submissions/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### List submissions filtered by template (paged)
+GET {{baseUrl}}/api/v1/forms/submissions?tenantId={{tenantId}}&templateId=00000000-0000-0000-0000-000000000001&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### List all submissions for a tenant (no template filter)
+GET {{baseUrl}}/api/v1/forms/submissions?tenantId={{tenantId}}&page=1&pageSize=20
+Authorization: Bearer {{token}}

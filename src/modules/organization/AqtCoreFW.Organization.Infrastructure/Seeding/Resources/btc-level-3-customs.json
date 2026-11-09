@@ -1,0 +1,22 @@
+[
+  {"code":"BTC.C.HQ.I","name":"Chi cục Hải quan khu vực I","nameEn":"Regional Customs Sub-bureau I","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.II","name":"Chi cục Hải quan khu vực II","nameEn":"Regional Customs Sub-bureau II","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.III","name":"Chi cục Hải quan khu vực III","nameEn":"Regional Customs Sub-bureau III","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.IV","name":"Chi cục Hải quan khu vực IV","nameEn":"Regional Customs Sub-bureau IV","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.V","name":"Chi cục Hải quan khu vực V","nameEn":"Regional Customs Sub-bureau V","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.VI","name":"Chi cục Hải quan khu vực VI","nameEn":"Regional Customs Sub-bureau VI","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.VII","name":"Chi cục Hải quan khu vực VII","nameEn":"Regional Customs Sub-bureau VII","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.VIII","name":"Chi cục Hải quan khu vực VIII","nameEn":"Regional Customs Sub-bureau VIII","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.IX","name":"Chi cục Hải quan khu vực IX","nameEn":"Regional Customs Sub-bureau IX","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.X","name":"Chi cục Hải quan khu vực X","nameEn":"Regional Customs Sub-bureau X","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XI","name":"Chi cục Hải quan khu vực XI","nameEn":"Regional Customs Sub-bureau XI","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XII","name":"Chi cục Hải quan khu vực XII","nameEn":"Regional Customs Sub-bureau XII","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XIII","name":"Chi cục Hải quan khu vực XIII","nameEn":"Regional Customs Sub-bureau XIII","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XIV","name":"Chi cục Hải quan khu vực XIV","nameEn":"Regional Customs Sub-bureau XIV","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XV","name":"Chi cục Hải quan khu vực XV","nameEn":"Regional Customs Sub-bureau XV","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XVI","name":"Chi cục Hải quan khu vực XVI","nameEn":"Regional Customs Sub-bureau XVI","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XVII","name":"Chi cục Hải quan khu vực XVII","nameEn":"Regional Customs Sub-bureau XVII","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XVIII","name":"Chi cục Hải quan khu vực XVIII","nameEn":"Regional Customs Sub-bureau XVIII","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XIX","name":"Chi cục Hải quan khu vực XIX","nameEn":"Regional Customs Sub-bureau XIX","parentCode":"BTC.C.HQ","level":3},
+  {"code":"BTC.C.HQ.XX","name":"Chi cục Hải quan khu vực XX","nameEn":"Regional Customs Sub-bureau XX","parentCode":"BTC.C.HQ","level":3}
+]

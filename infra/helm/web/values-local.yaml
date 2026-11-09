@@ -1,0 +1,20 @@
+# Local Docker Desktop kind cluster overrides — plan 260723-1258-k8s-local-stable-monolith-deploy.
+replicaCount: 1
+
+image:
+  repository: aqtcorefw/web
+  tag: local
+  pullPolicy: Never   # containerd image store shares local builds with the cluster
+  pullSecrets: []
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"   # plain HTTP locally
+  hosts:
+    - host: app.aqt.localtest.me
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []

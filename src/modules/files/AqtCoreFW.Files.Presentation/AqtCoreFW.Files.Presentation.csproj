@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Files.Presentation</AssemblyName>
+    <RootNamespace>AqtCoreFW.Files.Presentation</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" />
+    <ProjectReference Include="..\AqtCoreFW.Files.Application\AqtCoreFW.Files.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+  </ItemGroup>
+</Project>

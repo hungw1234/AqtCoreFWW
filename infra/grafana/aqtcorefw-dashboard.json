@@ -1,0 +1,102 @@
+{
+  "dashboard": {
+    "title": "AqtCoreFW API Dashboard",
+    "uid": "aqtcorefw-api",
+    "timezone": "Asia/Saigon",
+    "refresh": "30s",
+    "panels": [
+      {
+        "title": "Request Rate (req/s)",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+        "targets": [
+          {
+            "expr": "rate(http_requests_received_total{app=\"aqtcorefw\"}[5m])",
+            "legendFormat": "{{method}} {{code}}"
+          }
+        ]
+      },
+      {
+        "title": "Response Time p95 (ms)",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{app=\"aqtcorefw\"}[5m])) * 1000",
+            "legendFormat": "p95"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{app=\"aqtcorefw\"}[5m])) * 1000",
+            "legendFormat": "p50"
+          }
+        ]
+      },
+      {
+        "title": "Error Rate (%)",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 8 },
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_received_total{app=\"aqtcorefw\",code=~\"5..\"}[5m])) / sum(rate(http_requests_received_total{app=\"aqtcorefw\"}[5m])) * 100",
+            "legendFormat": "5xx %"
+          }
+        ]
+      },
+      {
+        "title": "Active Connections",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 8 },
+        "targets": [
+          {
+            "expr": "http_requests_in_progress{app=\"aqtcorefw\"}",
+            "legendFormat": "in-flight"
+          }
+        ]
+      },
+      {
+        "title": "CPU Usage",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+        "targets": [
+          {
+            "expr": "rate(process_cpu_seconds_total{app=\"aqtcorefw\"}[5m]) * 100",
+            "legendFormat": "{{pod}}"
+          }
+        ]
+      },
+      {
+        "title": "Memory (MB)",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+        "targets": [
+          {
+            "expr": "process_working_set_bytes{app=\"aqtcorefw\"} / 1024 / 1024",
+            "legendFormat": "{{pod}}"
+          }
+        ]
+      },
+      {
+        "title": "GC Collections",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+        "targets": [
+          {
+            "expr": "rate(dotnet_collection_count_total{app=\"aqtcorefw\"}[5m])",
+            "legendFormat": "Gen {{generation}}"
+          }
+        ]
+      },
+      {
+        "title": "DB Connection Pool",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+        "targets": [
+          {
+            "expr": "microsoft_data_sqlclient_active_hard_connections{app=\"aqtcorefw\"}",
+            "legendFormat": "active {{pod}}"
+          }
+        ]
+      }
+    ]
+  }
+}

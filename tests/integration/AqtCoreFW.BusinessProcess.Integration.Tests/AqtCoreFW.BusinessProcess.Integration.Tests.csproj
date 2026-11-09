@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>AqtCoreFW.BusinessProcess.Integration.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/host/AqtCoreFW.Api/AqtCoreFW.Api.csproj" />
+    <ProjectReference Include="../../shared/AqtCoreFW.Tests.SharedFixtures/AqtCoreFW.Tests.SharedFixtures.csproj" />
+    <ProjectReference Include="../../../src/modules/businessprocess/AqtCoreFW.BusinessProcess.Application/AqtCoreFW.BusinessProcess.Application.csproj" />
+    <ProjectReference Include="../../../src/modules/businessprocess/AqtCoreFW.BusinessProcess.Domain/AqtCoreFW.BusinessProcess.Domain.csproj" />
+    <ProjectReference Include="../../../src/modules/businessprocess/AqtCoreFW.BusinessProcess.Infrastructure/AqtCoreFW.BusinessProcess.Infrastructure.csproj" />
+    <ProjectReference Include="../../../src/modules/workflow/AqtCoreFW.Workflow.Domain/AqtCoreFW.Workflow.Domain.csproj" />
+    <ProjectReference Include="../../../src/modules/workflow/AqtCoreFW.Workflow.Infrastructure/AqtCoreFW.Workflow.Infrastructure.csproj" />
+    <ProjectReference Include="../../../src/modules/forms/AqtCoreFW.Forms.Domain/AqtCoreFW.Forms.Domain.csproj" />
+    <ProjectReference Include="../../../src/modules/forms/AqtCoreFW.Forms.Infrastructure/AqtCoreFW.Forms.Infrastructure.csproj" />
+    <ProjectReference Include="../../../src/modules/identity/AqtCoreFW.Identity.Application/AqtCoreFW.Identity.Application.csproj" />
+    <ProjectReference Include="../../../src/modules/identity/AqtCoreFW.Identity.Domain/AqtCoreFW.Identity.Domain.csproj" />
+  </ItemGroup>
+</Project>

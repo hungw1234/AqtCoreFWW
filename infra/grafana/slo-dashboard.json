@@ -1,0 +1,233 @@
+{
+  "dashboard": {
+    "title": "AqtCoreFW SLO Dashboard",
+    "uid": "aqtcorefw-slo",
+    "timezone": "Asia/Saigon",
+    "refresh": "30s",
+    "tags": ["slo", "aqtcorefw"],
+    "panels": [
+      {
+        "id": 1,
+        "title": "SLO-01 Availability (30d) — Target ≥ 99.5%",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+        "targets": [
+          {
+            "expr": "aqtcorefw:http_success_rate:rate30d * 100",
+            "legendFormat": "Availability %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 3,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "red",    "value": 0 },
+                { "color": "yellow", "value": 99.0 },
+                { "color": "green",  "value": 99.5 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Error Budget Remaining (30d)",
+        "type": "gauge",
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+        "targets": [
+          {
+            "expr": "aqtcorefw:error_budget_remaining:ratio30d * 100",
+            "legendFormat": "Budget %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "red",    "value": 0 },
+                { "color": "yellow", "value": 25 },
+                { "color": "green",  "value": 50 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "SLO-03 5xx Error Rate — Target < 1%",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+        "targets": [
+          {
+            "expr": "aqtcorefw:http_error_rate_5xx:rate5m * 100",
+            "legendFormat": "Error Rate %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": 0 },
+                { "color": "yellow", "value": 0.5 },
+                { "color": "red",    "value": 1.0 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "Error Budget Burn Rate (1h)",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+        "targets": [
+          {
+            "expr": "aqtcorefw:error_budget_burn_rate:rate1h",
+            "legendFormat": "Burn Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 2,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": 0 },
+                { "color": "yellow", "value": 2 },
+                { "color": "red",    "value": 5 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "SLO-02 API Latency Percentiles (ms)",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+        "targets": [
+          {
+            "expr": "aqtcorefw:http_request_duration_ms:p50_rate5m",
+            "legendFormat": "p50"
+          },
+          {
+            "expr": "aqtcorefw:http_request_duration_ms:p95_rate5m",
+            "legendFormat": "p95"
+          },
+          {
+            "expr": "aqtcorefw:http_request_duration_ms:p99_rate5m",
+            "legendFormat": "p99"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "ms" },
+          "overrides": [
+            {
+              "matcher": { "id": "byName", "options": "p50" },
+              "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
+            },
+            {
+              "matcher": { "id": "byName", "options": "p95" },
+              "properties": [{ "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }]
+            },
+            {
+              "matcher": { "id": "byName", "options": "p99" },
+              "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+            }
+          ]
+        },
+        "options": {
+          "legend": { "displayMode": "list", "placement": "bottom" },
+          "thresholds": {
+            "mode": "line",
+            "steps": [
+              { "color": "transparent", "value": null },
+              { "color": "yellow", "value": 200 },
+              { "color": "red",    "value": 1000 }
+            ]
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "Request Rate (req/s)",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+        "targets": [
+          {
+            "expr": "aqtcorefw:http_request_rate:rate5m",
+            "legendFormat": "req/s"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "reqps" }
+        }
+      },
+      {
+        "id": 7,
+        "title": "SLO-04 Outbox Success Rate (1h) — Target ≥ 99%",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 8, "x": 0, "y": 12 },
+        "targets": [
+          {
+            "expr": "aqtcorefw:outbox_success_rate:rate1h * 100",
+            "legendFormat": "Outbox Success %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "red",    "value": 0 },
+                { "color": "yellow", "value": 95 },
+                { "color": "green",  "value": 99 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "Outbox Dead Letter Depth — Target < 100",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 8, "x": 8, "y": 12 },
+        "targets": [
+          {
+            "expr": "aqtcorefw:outbox_dead_letter_depth",
+            "legendFormat": "Dead Letters"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": 0 },
+                { "color": "yellow", "value": 50 },
+                { "color": "red",    "value": 100 }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "time": { "from": "now-24h", "to": "now" },
+    "timepicker": {},
+    "schemaVersion": 39
+  }
+}

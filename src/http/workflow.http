@@ -1,0 +1,149 @@
+### ==== WORKFLOW API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base routes:
+#   /api/v1/workflow/definitions  — workflow definition CRUD (Admin for writes)
+#   /api/v1/workflow/instances    — instance lifecycle + transitions (Authenticated)
+#
+# Pattern: define a workflow once (Definition), then create instances per business entity.
+# Transitions use optimistic concurrency — 409 on concurrent modification.
+
+# ── Workflow Definitions ──────────────────────────────────────────────────────
+
+### List workflow definitions for a tenant (paged)
+GET {{baseUrl}}/api/v1/workflow/definitions?tenantId={{tenantId}}&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### List active definitions only
+GET {{baseUrl}}/api/v1/workflow/definitions?tenantId={{tenantId}}&isActive=true&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Get workflow definition by ID (includes states + transitions)
+GET {{baseUrl}}/api/v1/workflow/definitions/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Create workflow definition with states and transitions (Admin/SystemAdmin)
+POST {{baseUrl}}/api/v1/workflow/definitions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Case Approval Workflow",
+  "description": "Standard 3-step approval: Submit → Review → Approve/Reject",
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "createdBy": "00000000-0000-0000-0000-000000000001",
+  "states": [
+    {
+      "name": "Draft",
+      "displayNameVi": "Nháp",
+      "displayNameEn": "Draft",
+      "isInitial": true,
+      "isFinal": false,
+      "color": "#9E9E9E",
+      "sortOrder": 1
+    },
+    {
+      "name": "Submitted",
+      "displayNameVi": "Đã nộp",
+      "displayNameEn": "Submitted",
+      "isInitial": false,
+      "isFinal": false,
+      "color": "#2196F3",
+      "sortOrder": 2
+    },
+    {
+      "name": "Approved",
+      "displayNameVi": "Đã duyệt",
+      "displayNameEn": "Approved",
+      "isInitial": false,
+      "isFinal": true,
+      "color": "#4CAF50",
+      "sortOrder": 3
+    },
+    {
+      "name": "Rejected",
+      "displayNameVi": "Từ chối",
+      "displayNameEn": "Rejected",
+      "isInitial": false,
+      "isFinal": true,
+      "color": "#F44336",
+      "sortOrder": 4
+    }
+  ],
+  "transitions": [
+    {
+      "fromStateName": "Draft",
+      "toStateName": "Submitted",
+      "actionName": "Submit",
+      "actionLabelVi": "Nộp hồ sơ",
+      "actionLabelEn": "Submit",
+      "conditionsJson": null,
+      "sortOrder": 1
+    },
+    {
+      "fromStateName": "Submitted",
+      "toStateName": "Approved",
+      "actionName": "Approve",
+      "actionLabelVi": "Duyệt",
+      "actionLabelEn": "Approve",
+      "conditionsJson": null,
+      "sortOrder": 2
+    },
+    {
+      "fromStateName": "Submitted",
+      "toStateName": "Rejected",
+      "actionName": "Reject",
+      "actionLabelVi": "Từ chối",
+      "actionLabelEn": "Reject",
+      "conditionsJson": null,
+      "sortOrder": 3
+    }
+  ]
+}
+
+# ── Workflow Instances ────────────────────────────────────────────────────────
+
+###
+
+### Create workflow instance (bound to a business entity, starts at initial state)
+POST {{baseUrl}}/api/v1/workflow/instances
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "definitionId": "00000000-0000-0000-0000-000000000001",
+  "entityType": "Case",
+  "entityId": "00000000-0000-0000-0000-000000000002",
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "createdBy": "00000000-0000-0000-0000-000000000001",
+  "slaHours": 72
+}
+
+###
+
+### Get workflow instance by ID (includes full transition history)
+GET {{baseUrl}}/api/v1/workflow/instances/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Get available transitions (filtered server-side by JWT actor's permission set)
+GET {{baseUrl}}/api/v1/workflow/instances/00000000-0000-0000-0000-000000000001/available-transitions
+Authorization: Bearer {{token}}
+
+###
+
+### Execute a workflow transition (optimistic concurrency — may return 409)
+POST {{baseUrl}}/api/v1/workflow/instances/00000000-0000-0000-0000-000000000001/transitions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "transitionId": "00000000-0000-0000-0000-000000000001",
+  "comment": "Documents reviewed. All criteria met."
+}

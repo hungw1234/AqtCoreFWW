@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.AuthServer</AssemblyName>
+    <RootNamespace>AqtCoreFW.AuthServer</RootNamespace>
+    <UserSecretsId>aqtcorefw-authserver-dev</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+    <PackageReference Include="Hangfire.AspNetCore" />
+    <PackageReference Include="Hangfire.SqlServer" />
+    <PackageReference Include="OpenIddict.AspNetCore" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="MediatR" />
+    <ProjectReference Include="..\..\modules\identity\AqtCoreFW.Identity.Infrastructure\AqtCoreFW.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\identity\AqtCoreFW.Identity.Application\AqtCoreFW.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\modules\audit\AqtCoreFW.Audit.Domain\AqtCoreFW.Audit.Domain.csproj" />
+    <ProjectReference Include="..\..\modules\audit\AqtCoreFW.Audit.Infrastructure\AqtCoreFW.Audit.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\notifications\AqtCoreFW.Notifications.Application\AqtCoreFW.Notifications.Application.csproj" />
+    <ProjectReference Include="..\..\modules\systemparams\AqtCoreFW.SystemParams.Application\AqtCoreFW.SystemParams.Application.csproj" />
+    <ProjectReference Include="..\..\modules\systemparams\AqtCoreFW.SystemParams.Infrastructure\AqtCoreFW.SystemParams.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\shared\AqtCoreFW.Infrastructure\AqtCoreFW.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

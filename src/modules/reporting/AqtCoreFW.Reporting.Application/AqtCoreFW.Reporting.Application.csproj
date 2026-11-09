@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Reporting.Application</AssemblyName>
+    <RootNamespace>AqtCoreFW.Reporting.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Dapper" />
+    <ProjectReference Include="..\AqtCoreFW.Reporting.Domain\AqtCoreFW.Reporting.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Identity.Contracts\AqtCoreFW.Identity.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Audit.Contracts\AqtCoreFW.Audit.Contracts.csproj" />
+  </ItemGroup>
+</Project>

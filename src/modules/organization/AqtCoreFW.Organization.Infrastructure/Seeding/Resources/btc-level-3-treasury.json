@@ -1,0 +1,22 @@
+[
+  {"code":"BTC.KBNN.I","name":"Kho bạc Nhà nước khu vực I","nameEn":"State Treasury Region I","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.II","name":"Kho bạc Nhà nước khu vực II","nameEn":"State Treasury Region II","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.III","name":"Kho bạc Nhà nước khu vực III","nameEn":"State Treasury Region III","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.IV","name":"Kho bạc Nhà nước khu vực IV","nameEn":"State Treasury Region IV","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.V","name":"Kho bạc Nhà nước khu vực V","nameEn":"State Treasury Region V","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.VI","name":"Kho bạc Nhà nước khu vực VI","nameEn":"State Treasury Region VI","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.VII","name":"Kho bạc Nhà nước khu vực VII","nameEn":"State Treasury Region VII","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.VIII","name":"Kho bạc Nhà nước khu vực VIII","nameEn":"State Treasury Region VIII","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.IX","name":"Kho bạc Nhà nước khu vực IX","nameEn":"State Treasury Region IX","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.X","name":"Kho bạc Nhà nước khu vực X","nameEn":"State Treasury Region X","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XI","name":"Kho bạc Nhà nước khu vực XI","nameEn":"State Treasury Region XI","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XII","name":"Kho bạc Nhà nước khu vực XII","nameEn":"State Treasury Region XII","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XIII","name":"Kho bạc Nhà nước khu vực XIII","nameEn":"State Treasury Region XIII","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XIV","name":"Kho bạc Nhà nước khu vực XIV","nameEn":"State Treasury Region XIV","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XV","name":"Kho bạc Nhà nước khu vực XV","nameEn":"State Treasury Region XV","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XVI","name":"Kho bạc Nhà nước khu vực XVI","nameEn":"State Treasury Region XVI","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XVII","name":"Kho bạc Nhà nước khu vực XVII","nameEn":"State Treasury Region XVII","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XVIII","name":"Kho bạc Nhà nước khu vực XVIII","nameEn":"State Treasury Region XVIII","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XIX","name":"Kho bạc Nhà nước khu vực XIX","nameEn":"State Treasury Region XIX","parentCode":"BTC.KBNN","level":3},
+  {"code":"BTC.KBNN.XX","name":"Kho bạc Nhà nước khu vực XX","nameEn":"State Treasury Region XX","parentCode":"BTC.KBNN","level":3}
+]

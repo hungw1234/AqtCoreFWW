@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Chat.Contracts</AssemblyName>
+    <RootNamespace>AqtCoreFW.SharedKernel.Contracts.Clients</RootNamespace>
+    <IsPackable>true</IsPackable>
+    <PackageId>AqtCoreFW.Chat.Contracts</PackageId>
+    <Version>1.0.0</Version>
+    <Description>Chat module client interface. Project reference in monolith, NuGet when extracted.</Description>
+  </PropertyGroup>
+</Project>

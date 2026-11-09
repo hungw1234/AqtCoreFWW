@@ -1,0 +1,102 @@
+# Local Docker Desktop kind cluster overrides — plan 260723-1258-k8s-local-stable-monolith-deploy.
+replicaCount: 1
+
+image:
+  repository: aqtcorefw/authserver
+  tag: local
+  pullPolicy: Never   # containerd image store shares local builds with the cluster
+  pullSecrets: []
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"   # plain HTTP locally
+  hosts:
+    - host: auth.aqt.localtest.me
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# env is a full replace (toYaml .Values.env) — repeat the whole list with local values.
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Production            # P2: validator + PFX certificate branch exercised
+  - name: Urls
+    value: "http://+:5000"
+  - name: ConnectionStrings__Default
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: db-connection-string
+  - name: Auth__IssuerUri
+    valueFrom:
+      configMapKeyRef:
+        name: aqtcorefw-auth-config
+        key: issuer-uri
+  # Local Vault (dev-mode) token auth — same pattern as the api chart's extraEnv.
+  - name: VAULT_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: vault-token
+  - name: Vault__Address
+    value: "http://vault.aqt-data.svc.cluster.local:8200"
+  # k8s runAsUser 1001 has no passwd entry → HOME defaults to "/"; kept at /tmp so any
+  # library that writes under $HOME still works (the Production branch no longer writes
+  # dev certs, but the env stays harmless and covers the Development rollback path).
+  - name: HOME
+    value: "/tmp"
+  # Rehearsal-only: plain-HTTP ingress locally — disables the OpenIddict HTTPS transport
+  # requirement + HTTPS redirect that Production otherwise enforces. NEVER set in prod.
+  - name: Auth__AllowHttp
+    value: "true"
+  # P2: non-Development OpenIddict branch loads PFX certs from the mounted Secret
+  # (authserver-openiddict-certs, created by scripts/k8s-local-generate-prod-secrets.sh).
+  # Missing mount = fail-fast at startup by design.
+  - name: Auth__SigningCertificate__Path
+    value: "/certs/signing.pfx"
+  - name: Auth__EncryptionCertificate__Path
+    value: "/certs/encryption.pfx"
+  - name: Auth__SigningCertificate__Password
+    valueFrom:
+      secretKeyRef:
+        name: authserver-openiddict-certs
+        key: pfx-password
+  - name: Auth__EncryptionCertificate__Password
+    valueFrom:
+      secretKeyRef:
+        name: authserver-openiddict-certs
+        key: pfx-password
+  # OIDC SPA client callbacks. REQUIRED outside Development — the seeder throws at startup
+  # without them (this pod runs ASPNETCORE_ENVIRONMENT=Production above), which is deliberate:
+  # falling back to localhost here would seed a client that can never complete an authorize
+  # round-trip from app.aqt.localtest.me. .NET binds arrays from indexed env keys (__0, __1),
+  # the same shape values-staging.yaml uses for Cors__AllowedOrigins.
+  # /silent-renew.html is load-bearing: oidc-client-ts loads it in a hidden iframe when the
+  # refresh-token grant expires, and an unwhitelisted URI yields 400 invalid_request.
+  - name: Auth__SpaClient__RedirectUris__0
+    value: "http://app.aqt.localtest.me/callback"
+  - name: Auth__SpaClient__RedirectUris__1
+    value: "http://app.aqt.localtest.me/silent-renew.html"
+  # ORDER IS LOAD-BEARING: slashless FIRST. new Uri("http://h:p") equals new Uri("http://h:p/"),
+  # so the seeder's ISet<Uri> keeps only the first spelling; OpenIddict stores its OriginalString
+  # and matches logout by ordinal compare. The SPA sends window.location.origin (slashless), so a
+  # slash-terminated stored value fails logout with 400 invalid_request.
+  - name: Auth__SpaClient__PostLogoutRedirectUris__0
+    value: "http://app.aqt.localtest.me"
+  - name: Auth__SpaClient__PostLogoutRedirectUris__1
+    value: "http://app.aqt.localtest.me/"
+
+extraVolumes:
+  - name: openiddict-certs
+    secret:
+      secretName: authserver-openiddict-certs
+extraVolumeMounts:
+  - name: openiddict-certs
+    mountPath: /certs
+    readOnly: true
+
+config:
+  issuerUri: "http://auth.aqt.localtest.me"

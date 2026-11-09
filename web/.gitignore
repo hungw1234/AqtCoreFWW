@@ -1,0 +1,34 @@
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# W1: VGCA plugin copied by vite-plugin-static-copy at build/dev time — not source-controlled
+public/vendor/vgca/
+
+# Playwright cross-worker token cache (dev credentials only — never commit)
+e2e/.cache/*
+!e2e/.cache/.gitkeep
+
+# Playwright test artifacts (regenerated each run)
+test-results/
+playwright-report/
+
+# Vitest reporter output (regenerated each run)
+vitest-results.json
+vitest-results.txt
+
+.env.local
+.env.*.local
+.vite/
+coverage/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

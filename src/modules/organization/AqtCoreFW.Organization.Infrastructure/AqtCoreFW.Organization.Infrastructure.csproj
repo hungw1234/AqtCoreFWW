@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Organization.Infrastructure</AssemblyName>
+    <RootNamespace>AqtCoreFW.Organization.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Dapper" />
+    <ProjectReference Include="..\AqtCoreFW.Organization.Application\AqtCoreFW.Organization.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Infrastructure\AqtCoreFW.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.OrgUnit.Contracts\AqtCoreFW.OrgUnit.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Identity.Contracts\AqtCoreFW.Identity.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Seeding\Resources\*.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AqtCoreFW.Organization.Integration.Tests" />
+  </ItemGroup>
+</Project>

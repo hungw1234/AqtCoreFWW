@@ -1,0 +1,35 @@
+# Runs infra/docker/vault-init.sh (mounted verbatim via ConfigMap — do NOT fork the script)
+# against the in-cluster Vault. Recreate the ConfigMap + Job on every reseed:
+#   kubectl -n aqt-data create configmap vault-init-script \
+#     --from-file=vault-init.sh=infra/docker/vault-init.sh
+# scripts/k8s-local-reseed.sh does this. The Job is delete-and-reapply (no stable name reuse
+# issues; completed Jobs are immutable).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-seed
+  namespace: aqt-data
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels: { app: vault-seed }
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: seed
+          image: curlimages/curl:8.10.1
+          command: ["/bin/sh", "/seed/vault-init.sh"]
+          env:
+            - name: VAULT_ADDR
+              value: "http://vault.aqt-data.svc.cluster.local:8200"
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef: { name: aqt-data-secrets, key: vault-root-token }
+          volumeMounts:
+            - { name: seed-script, mountPath: /seed }
+      volumes:
+        - name: seed-script
+          configMap:
+            name: vault-init-script
+            defaultMode: 0755

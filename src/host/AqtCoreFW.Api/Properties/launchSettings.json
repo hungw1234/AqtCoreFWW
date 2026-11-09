@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "AqtCoreFW.Api": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Gateway__Mode": "Standalone",
+        "VAULT_ADDR": "http://localhost:8200",
+        "VAULT_TOKEN": "dev-only-token"
+      }
+    }
+  }
+}

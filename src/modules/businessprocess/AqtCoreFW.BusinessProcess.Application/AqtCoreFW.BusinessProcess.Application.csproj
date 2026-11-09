@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.BusinessProcess.Application</AssemblyName>
+    <RootNamespace>AqtCoreFW.BusinessProcess.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Dapper" />
+    <ProjectReference Include="..\AqtCoreFW.BusinessProcess.Domain\AqtCoreFW.BusinessProcess.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Forms.Contracts\AqtCoreFW.Forms.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Workflow.Contracts\AqtCoreFW.Workflow.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.BusinessProcess.Contracts\AqtCoreFW.BusinessProcess.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Identity.Contracts\AqtCoreFW.Identity.Contracts.csproj" />
+  </ItemGroup>
+</Project>

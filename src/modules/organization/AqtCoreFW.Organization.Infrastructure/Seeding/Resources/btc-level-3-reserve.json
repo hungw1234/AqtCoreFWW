@@ -1,0 +1,17 @@
+[
+  {"code":"BTC.C.DT.I","name":"Chi cục Dự trữ Nhà nước khu vực I","nameEn":"Regional State Reserve Branch I","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.II","name":"Chi cục Dự trữ Nhà nước khu vực II","nameEn":"Regional State Reserve Branch II","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.III","name":"Chi cục Dự trữ Nhà nước khu vực III","nameEn":"Regional State Reserve Branch III","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.IV","name":"Chi cục Dự trữ Nhà nước khu vực IV","nameEn":"Regional State Reserve Branch IV","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.V","name":"Chi cục Dự trữ Nhà nước khu vực V","nameEn":"Regional State Reserve Branch V","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.VI","name":"Chi cục Dự trữ Nhà nước khu vực VI","nameEn":"Regional State Reserve Branch VI","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.VII","name":"Chi cục Dự trữ Nhà nước khu vực VII","nameEn":"Regional State Reserve Branch VII","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.VIII","name":"Chi cục Dự trữ Nhà nước khu vực VIII","nameEn":"Regional State Reserve Branch VIII","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.IX","name":"Chi cục Dự trữ Nhà nước khu vực IX","nameEn":"Regional State Reserve Branch IX","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.X","name":"Chi cục Dự trữ Nhà nước khu vực X","nameEn":"Regional State Reserve Branch X","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.XI","name":"Chi cục Dự trữ Nhà nước khu vực XI","nameEn":"Regional State Reserve Branch XI","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.XII","name":"Chi cục Dự trữ Nhà nước khu vực XII","nameEn":"Regional State Reserve Branch XII","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.XIII","name":"Chi cục Dự trữ Nhà nước khu vực XIII","nameEn":"Regional State Reserve Branch XIII","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.XIV","name":"Chi cục Dự trữ Nhà nước khu vực XIV","nameEn":"Regional State Reserve Branch XIV","parentCode":"BTC.C.DT","level":3},
+  {"code":"BTC.C.DT.XV","name":"Chi cục Dự trữ Nhà nước khu vực XV","nameEn":"Regional State Reserve Branch XV","parentCode":"BTC.C.DT","level":3}
+]

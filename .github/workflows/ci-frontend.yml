@@ -1,0 +1,85 @@
+name: CI (frontend)
+
+# Split from ci.yml so a web-only change does not start the .NET jobs. Same budget policy:
+# docs/deployment-guide.md section 0 ("When CI runs").
+on:
+  # Pre-merge CI only when the toolchain or the shared API/auth client changes; feature and UI
+  # changes are verified locally before merge and once on main after merge.
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - '.github/workflows/ci-frontend.yml'
+      - 'web/package.json'
+      - 'web/pnpm-lock.yaml'
+      - 'web/tsconfig*.json'
+      - 'web/vite.config.ts'
+      - 'web/vitest.config.ts'
+      - 'web/orval.config.ts'
+      - 'web/src/core/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci-frontend.yml'
+      - 'web/**'
+      - '!web/e2e/**'
+      - '!web/plans/**'
+      - '!**/*.md'
+  # Manual run for any branch: gh workflow run "CI (frontend)" --ref <branch>
+  workflow_dispatch:
+
+concurrency:
+  group: ci-frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ───────────────────────────────────────────────────────────────────────────
+  # Frontend: type check, unit tests, production build
+  # ───────────────────────────────────────────────────────────────────────────
+  frontend:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: web/package.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm exec tsc --noEmit -p tsconfig.app.json
+
+      - name: Type check (tests)
+        run: pnpm exec tsc --noEmit -p tsconfig.test.json
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Unit tests
+        run: pnpm exec vitest run --reporter=json --outputFile=test-results/vitest.json
+
+      - name: Build (production)
+        run: pnpm run build
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-test-results
+          path: web/test-results/

@@ -1,0 +1,22 @@
+[
+  {"code":"BTC.C.THUE.I","name":"Chi cục Thuế khu vực I","nameEn":"Regional Tax Office I","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.II","name":"Chi cục Thuế khu vực II","nameEn":"Regional Tax Office II","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.III","name":"Chi cục Thuế khu vực III","nameEn":"Regional Tax Office III","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.IV","name":"Chi cục Thuế khu vực IV","nameEn":"Regional Tax Office IV","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.V","name":"Chi cục Thuế khu vực V","nameEn":"Regional Tax Office V","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.VI","name":"Chi cục Thuế khu vực VI","nameEn":"Regional Tax Office VI","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.VII","name":"Chi cục Thuế khu vực VII","nameEn":"Regional Tax Office VII","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.VIII","name":"Chi cục Thuế khu vực VIII","nameEn":"Regional Tax Office VIII","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.IX","name":"Chi cục Thuế khu vực IX","nameEn":"Regional Tax Office IX","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.X","name":"Chi cục Thuế khu vực X","nameEn":"Regional Tax Office X","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XI","name":"Chi cục Thuế khu vực XI","nameEn":"Regional Tax Office XI","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XII","name":"Chi cục Thuế khu vực XII","nameEn":"Regional Tax Office XII","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XIII","name":"Chi cục Thuế khu vực XIII","nameEn":"Regional Tax Office XIII","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XIV","name":"Chi cục Thuế khu vực XIV","nameEn":"Regional Tax Office XIV","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XV","name":"Chi cục Thuế khu vực XV","nameEn":"Regional Tax Office XV","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XVI","name":"Chi cục Thuế khu vực XVI","nameEn":"Regional Tax Office XVI","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XVII","name":"Chi cục Thuế khu vực XVII","nameEn":"Regional Tax Office XVII","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XVIII","name":"Chi cục Thuế khu vực XVIII","nameEn":"Regional Tax Office XVIII","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XIX","name":"Chi cục Thuế khu vực XIX","nameEn":"Regional Tax Office XIX","parentCode":"BTC.C.THUE","level":3},
+  {"code":"BTC.C.THUE.XX","name":"Chi cục Thuế khu vực XX","nameEn":"Regional Tax Office XX","parentCode":"BTC.C.THUE","level":3}
+]

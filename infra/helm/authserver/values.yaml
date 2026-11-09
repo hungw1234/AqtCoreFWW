@@ -1,0 +1,112 @@
+# AqtCoreFW AuthServer Helm values
+# OpenIddict Authorization Server — separate deployment from API
+
+replicaCount: 1
+
+image:
+  repository: nexus.internal:5000/aqtcorefw/authserver
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - name: nexus-registry-secret
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 5000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: auth.aqtcorefw.internal
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: aqtcorefw-auth-tls
+      hosts:
+        - auth.aqtcorefw.internal
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+# No autoscaling — AuthServer is low-traffic (token + login only)
+autoscaling:
+  enabled: false
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  fsGroup: 1001
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 5000
+  initialDelaySeconds: 20
+  periodSeconds: 15
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 5000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+# NOTE — least-privilege runtime DB login (RLS-PRINCIPAL-MIGRATE-LOGIN-WIRING):
+# The AuthServer chart intentionally has NO db-migrate Job. AuthServer migrates only
+# IdentityDbContext + MessagingDbContext, both of which the Api chart's pre-upgrade Job
+# already covers (AuthServer's contexts ⊂ Api's migrate set). When Api + AuthServer
+# deploy together (Api hook runs first), AuthServer finds nothing pending. But Helm does
+# NOT enforce ordering across separate releases → conservative default: leave
+# SKIP_STARTUP_MIGRATIONS unset here → AuthServer migrates on boot → its runtime login
+# keeps db_ddladmin. Accepted residual: blast radius = "can ALTER a SECURITY POLICY",
+# NOT "read cross-tenant" (RLS predicates carve out db_owner / sysadmin / db_securityadmin
+# only — RlsPrincipalValidator.WarnIfDbOwnerInProduction guards those). To eliminate this
+# residual, mirror the Api chart's db-migrate Job here using the same aqtcore_migrate
+# elevated login + set SKIP_STARTUP_MIGRATIONS=true on this deployment. See:
+# docs/ops/rls-migration-login-runbook.md §AuthServer note.
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Production
+  - name: Urls
+    value: "http://+:5000"
+  - name: ConnectionStrings__Default
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: db-connection-string
+  # IssuerUri must match the public URL clients use
+  - name: Auth__IssuerUri
+    valueFrom:
+      configMapKeyRef:
+        name: aqtcorefw-auth-config
+        key: issuer-uri
+  # REQUIRED, deliberately unset here: Auth__SpaClient__RedirectUris__N and
+  # Auth__SpaClient__PostLogoutRedirectUris__N. The OpenIddict seeder runs in every
+  # environment and throws at startup when they are missing outside Development, so a
+  # deployment MUST supply its own origins in an overlay (see values-local.yaml). Shipping
+  # a placeholder here would seed a client whose callbacks point somewhere wrong, which
+  # fails as an opaque redirect_uri mismatch at login instead of loudly at boot.
+  # .NET binds arrays from indexed keys: __0, __1, ... Each origin needs BOTH /callback and
+  # /silent-renew.html in RedirectUris. In PostLogoutRedirectUris list each origin SLASHLESS
+  # FIRST, then with a trailing slash: the two spellings are one Uri, the seeder's ISet keeps
+  # whichever came first, and OpenIddict matches logout by ordinal compare against the SPA's
+  # window.location.origin (always slashless).
+
+config:
+  issuerUri: "https://auth.aqtcorefw.internal"
+
+# Optional extra volumes/mounts — used by rehearsal/prod overlays to mount the OpenIddict
+# signing+encryption certificate Secret (Auth:SigningCertificate:Path / Auth:EncryptionCertificate:Path).
+# Unset = no volumes rendered (base behavior unchanged).
+extraVolumes: []
+extraVolumeMounts: []

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>AqtCoreFW.AssetManagement.Integration.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="Testcontainers.Redis" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/host/AqtCoreFW.Api/AqtCoreFW.Api.csproj" />
+    <ProjectReference Include="../../shared/AqtCoreFW.Tests.SharedFixtures/AqtCoreFW.Tests.SharedFixtures.csproj" />
+    <ProjectReference Include="../../../src/modules/assetmanagement/AqtCoreFW.AssetManagement.Application/AqtCoreFW.AssetManagement.Application.csproj" />
+    <ProjectReference Include="../../../src/modules/assetmanagement/AqtCoreFW.AssetManagement.Domain/AqtCoreFW.AssetManagement.Domain.csproj" />
+    <ProjectReference Include="../../../src/modules/assetmanagement/AqtCoreFW.AssetManagement.Infrastructure/AqtCoreFW.AssetManagement.Infrastructure.csproj" />
+    <ProjectReference Include="../../../src/modules/systemparams/AqtCoreFW.SystemParams.Infrastructure/AqtCoreFW.SystemParams.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

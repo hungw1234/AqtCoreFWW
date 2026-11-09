@@ -1,0 +1,184 @@
+asyncapi: 3.0.0
+info:
+  title: AqtCoreFW Domain Events
+  version: 1.0.0
+  description: |
+    AsyncAPI specification for AqtCoreFW domain events that cross module boundaries.
+    Events are dispatched via Outbox pattern → MassTransit → RabbitMQ.
+    IExternalDomainEvent types are published to MassTransit exchanges.
+    IInternalDomainEvent types are consumed in-process via MediatR but documented here
+    when they trigger cross-module side effects (e.g., Audit logging, Notifications).
+  contact:
+    name: AEQUITAS Engineering
+  license:
+    name: Proprietary
+
+servers:
+  development:
+    host: localhost:5672
+    protocol: amqp
+    description: Local RabbitMQ (Docker Compose)
+  staging:
+    host: rabbitmq.staging.internal:5672
+    protocol: amqp
+    description: Staging RabbitMQ cluster
+  production:
+    host: rabbitmq.prod.internal:5672
+    protocol: amqp
+    description: Production RabbitMQ cluster
+
+defaultContentType: application/json
+
+channels:
+  # ── External Domain Events (Outbox → MassTransit) ──────────────────────
+  notification-sent:
+    address: AqtCoreFW.Notifications.Domain.Events:NotificationSentEvent
+    description: Published after a notification is successfully sent via any channel.
+    messages:
+      notificationSent:
+        $ref: '#/components/messages/NotificationSentEvent'
+
+  file-uploaded:
+    address: AqtCoreFW.Files.Domain.Events:FileUploadedEvent
+    description: Raised after file passes ClamAV scan and becomes Available.
+    messages:
+      fileUploaded:
+        $ref: '#/components/messages/FileUploadedEvent'
+
+  file-quarantined:
+    address: AqtCoreFW.Files.Domain.Events:FileQuarantinedEvent
+    description: Raised when a file is rejected by ClamAV virus scan.
+    messages:
+      fileQuarantined:
+        $ref: '#/components/messages/FileQuarantinedEvent'
+
+  sla-breached:
+    address: AqtCoreFW.Workflow.Domain.Events:SlaBreachedEvent
+    description: Raised when a workflow instance exceeds its SLA time limit.
+    messages:
+      slaBreached:
+        $ref: '#/components/messages/SlaBreachedEvent'
+
+components:
+  messages:
+    NotificationSentEvent:
+      name: NotificationSentEvent
+      title: Notification Sent
+      summary: Published after notification delivery (IExternalDomainEvent — via Outbox+MassTransit)
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/NotificationSentEvent'
+
+    FileUploadedEvent:
+      name: FileUploadedEvent
+      title: File Uploaded
+      payload:
+        $ref: '#/components/schemas/FileUploadedEvent'
+
+    FileQuarantinedEvent:
+      name: FileQuarantinedEvent
+      title: File Quarantined
+      payload:
+        $ref: '#/components/schemas/FileQuarantinedEvent'
+
+    SlaBreachedEvent:
+      name: SlaBreachedEvent
+      title: SLA Breached
+      payload:
+        $ref: '#/components/schemas/SlaBreachedEvent'
+
+  schemas:
+    NotificationSentEvent:
+      type: object
+      required: [NotificationId, TenantId, RecipientUserId, Channel, EventId, OccurredAt]
+      properties:
+        NotificationId:
+          type: string
+          format: uuid
+        TenantId:
+          type: string
+          format: uuid
+        RecipientUserId:
+          type: string
+          format: uuid
+        Channel:
+          type: string
+          enum: [Email, Sms, InApp]
+        EventId:
+          type: string
+          format: uuid
+        OccurredAt:
+          type: string
+          format: date-time
+
+    FileUploadedEvent:
+      type: object
+      required: [FileId, TenantId, OriginalFileName, SizeBytes]
+      properties:
+        FileId:
+          type: string
+          format: uuid
+          description: Strongly-typed FileId value object — serializes as UUID via JsonConverter
+        TenantId:
+          type: string
+          format: uuid
+        OriginalFileName:
+          type: string
+        SizeBytes:
+          type: integer
+          format: int64
+        EventId:
+          type: string
+          format: uuid
+        OccurredAt:
+          type: string
+          format: date-time
+
+    FileQuarantinedEvent:
+      type: object
+      required: [FileId, TenantId, OriginalFileName]
+      properties:
+        FileId:
+          type: string
+          format: uuid
+          description: Strongly-typed FileId value object — serializes as UUID via JsonConverter
+        TenantId:
+          type: string
+          format: uuid
+        OriginalFileName:
+          type: string
+        EventId:
+          type: string
+          format: uuid
+        OccurredAt:
+          type: string
+          format: date-time
+
+    SlaBreachedEvent:
+      type: object
+      required: [InstanceId, CurrentStateId, DefinitionId, TenantId]
+      properties:
+        InstanceId:
+          type: string
+          format: uuid
+        CurrentStateId:
+          type: string
+          format: uuid
+        DefinitionId:
+          type: string
+          format: uuid
+        TenantId:
+          type: string
+          description: Tenant identifier (string, not UUID — uses string key in workflow context)
+        StateEnteredAt:
+          type: string
+          format: date-time
+        ElapsedHours:
+          type: integer
+          description: Elapsed hours since state entry (C# int)
+        EventId:
+          type: string
+          format: uuid
+        OccurredAt:
+          type: string
+          format: date-time

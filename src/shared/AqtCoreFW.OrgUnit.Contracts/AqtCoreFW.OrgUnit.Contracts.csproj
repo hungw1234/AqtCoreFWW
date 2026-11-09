@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.OrgUnit.Contracts</AssemblyName>
+    <RootNamespace>AqtCoreFW.SharedKernel.Contracts.Clients</RootNamespace>
+    <IsPackable>true</IsPackable>
+    <PackageId>AqtCoreFW.OrgUnit.Contracts</PackageId>
+    <Version>1.1.0</Version>
+    <Description>OrgUnit module client interface. Project reference in monolith, NuGet when extracted.</Description>
+  </PropertyGroup>
+</Project>

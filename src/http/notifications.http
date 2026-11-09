@@ -1,0 +1,102 @@
+### ==== NOTIFICATIONS API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base routes:
+#   /api/v1/notifications                         — user-facing (Authenticated)
+#   /api/v1/admin/notification-templates          — template admin (SystemAdmin/TenantAdmin)
+#
+# Channel values: InApp, Email, Sms, Push
+
+# ── User Notifications ───────────────────────────────────────────────────────
+
+### List my notifications (paged)
+# userId resolved from JWT sub claim — no userId param needed
+GET {{baseUrl}}/api/v1/notifications?tenantId={{tenantId}}&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### List unread notifications only
+GET {{baseUrl}}/api/v1/notifications?tenantId={{tenantId}}&isRead=false&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### List notifications filtered by channel
+GET {{baseUrl}}/api/v1/notifications?tenantId={{tenantId}}&channel=InApp&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Get unread notification count (for badge display)
+GET {{baseUrl}}/api/v1/notifications/unread-count?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Mark a single notification as read
+PATCH {{baseUrl}}/api/v1/notifications/00000000-0000-0000-0000-000000000001/read?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Send notification (programmatic — SystemAdmin/TenantAdmin only)
+POST {{baseUrl}}/api/v1/notifications
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "recipientUserId": "00000000-0000-0000-0000-000000000002",
+  "subject": "Your case has been approved",
+  "body": "Case #ABC12345 has been reviewed and approved. Please check the portal for details.",
+  "channel": "InApp",
+  "templateId": null,
+  "correlationId": "case-00000000-0000-0000-0000-000000000001"
+}
+
+###
+
+### Send notification using a template
+POST {{baseUrl}}/api/v1/notifications
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "recipientUserId": "00000000-0000-0000-0000-000000000002",
+  "subject": "Case status update",
+  "body": "Your case has been updated.",
+  "channel": "Email",
+  "templateId": "00000000-0000-0000-0000-000000000001",
+  "correlationId": null
+}
+
+# ── Notification Templates Admin ─────────────────────────────────────────────
+
+###
+
+### List notification templates for a tenant (SystemAdmin/TenantAdmin)
+GET {{baseUrl}}/api/v1/admin/notification-templates?tenantId={{tenantId}}&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### List templates filtered by channel
+GET {{baseUrl}}/api/v1/admin/notification-templates?tenantId={{tenantId}}&channel=Email&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Create notification template (SystemAdmin/TenantAdmin)
+# SubjectTemplate and BodyTemplate support {{variable}} placeholders
+POST {{baseUrl}}/api/v1/admin/notification-templates
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "templateKey": "case.approved",
+  "subjectTemplate": "Case {{caseNumber}} has been approved",
+  "bodyTemplate": "Dear {{fullName}},\n\nYour case {{caseNumber}} submitted on {{submittedDate}} has been approved.\n\nPlease log in to the portal to view the full decision.",
+  "channel": "Email"
+}

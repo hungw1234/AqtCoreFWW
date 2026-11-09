@@ -1,0 +1,73 @@
+# Production environment overrides
+replicaCount: 3
+
+image:
+  tag: prod-latest
+
+ingress:
+  hosts:
+    - host: api.aqtcorefw.gov.vn
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: aqtcorefw-prod-tls
+      hosts:
+        - api.aqtcorefw.gov.vn
+
+config:
+  authAuthorityUrl: "https://auth.aqtcorefw.gov.vn"
+
+# NOTE — least-privilege runtime DB login (RLS-PRINCIPAL-SKIP-STARTUP-MIGRATIONS):
+# The chart ships the SAFE default (`SKIP_STARTUP_MIGRATIONS=false` in values.yaml → runtime pods run
+# in-app migrations → runtime login needs db_ddladmin). To move to the least-privilege steady state,
+# do BOTH, in order — see docs/deployment-guide.md §4:
+#   1. Provision a separate ELEVATED migration login; add it as the `db-migration-connection-string`
+#      secret key; uncomment the elevated-login env override in templates/db-migrate-job.yaml.
+#   2. Then set `SKIP_STARTUP_MIGRATIONS=true` here (via extraEnv — last duplicate env var wins) and
+#      drop `db_ddladmin` from the runtime login. Do NOT do step 2 before step 1 — the pre-upgrade
+#      db-migrate Job would then run under a DDL-less login and fail on any RLS/DDL migration.
+# extraEnv:
+#   - name: SKIP_STARTUP_MIGRATIONS
+#     value: "true"
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 60
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 2000m
+    memory: 1024Mi
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+metrics:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus
+
+  # OFF until a production cluster actually exists.
+  #
+  # There is no prod deployment yet, so nothing in this block has ever been validated against a real
+  # Prometheus Operator — including the `release: prometheus` label above, which is the
+  # kube-prometheus-stack default only when that stack was installed under the Helm release name
+  # "prometheus". Nobody has checked which name was used, because there is nowhere to check.
+  #
+  # Shipping these rules enabled would mean asserting alert coverage that has never been observed to
+  # work. They stay off until the first real deploy, at which point follow the enable procedure in
+  # docs/deployment-guide.md §9: read the cluster's actual ruleSelector, set `labels` to match it,
+  # flip `enabled`, then confirm via the Prometheus API that the rules were LOADED — the Operator
+  # configures ruleSelector separately from serviceMonitorSelector, so a working ServiceMonitor does
+  # not prove rules load, and a mismatch fails silently with the objects present but ignored.
+  prometheusRule:
+    enabled: false
+    labels: {}

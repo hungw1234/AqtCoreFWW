@@ -1,0 +1,85 @@
+{{/* AqtCoreFW — Helm pre-install/pre-upgrade Job to run EF Core migrations */}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "aqtcorefw.fullname" . }}-db-migrate
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "aqtcorefw.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        {{- include "aqtcorefw.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: db-migrate
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ include "aqtcorefw.serviceAccountName" . }}
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: db-migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["dotnet", "AqtCoreFW.Api.dll", "--migrate-only"]
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            # Belt-and-suspenders alongside the --migrate-only arg: run schema migrations then exit.
+            - name: RUN_MIGRATIONS_ONLY
+              value: "true"
+            # External-secret fallback (optional): environments that populate the
+            # `aqtcorefw-secrets` external Secret (the same one the Deployment's env
+            # references — local kind does this via scripts/k8s-local-create-secrets.sh)
+            # get the connection string from it here. When that Secret or key is absent
+            # the var stays unset and the `*-secret` envFrom below applies. This entry
+            # MUST stay ABOVE the elevated override: with duplicate env names the LAST
+            # entry wins, and the elevated login must win once uncommented.
+            - name: ConnectionStrings__Default
+              valueFrom:
+                secretKeyRef:
+                  name: aqtcorefw-secrets
+                  key: db-connection-string
+                  optional: true
+            # Vault token fallback (optional, same external Secret): under Production the Job's
+            # host build runs ProductionSecretValidator, which needs Vault-sourced keys — without
+            # a token the Vault config provider silently no-ops and the validator kills the Job.
+            # Environments using AppRole (chart `-secret` envFrom) leave this key absent.
+            # (Vault__Address is non-secret — set it via config.extra so envFrom carries it.)
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: aqtcorefw-secrets
+                  key: vault-token
+                  optional: true
+            # To run migrations under a separate ELEVATED login (db_owner, or db_ddladmin + ALTER ANY
+            # SECURITY POLICY) — a prerequisite for dropping db_ddladmin from the runtime login, see
+            # docs/deployment-guide.md §4 — provision that login as the `db-migration-connection-string`
+            # secret key and uncomment the override below. It is the LAST ConnectionStrings__Default
+            # entry so it wins over both the external-secret fallback above and any envFrom key.
+            # - name: ConnectionStrings__Default
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: {{ include "aqtcorefw.fullname" . }}-secret
+            #       key: db-migration-connection-string
+          envFrom:
+            - configMapRef:
+                name: {{ include "aqtcorefw.configMapName" . }}
+            - secretRef:
+                name: {{ include "aqtcorefw.fullname" . }}-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

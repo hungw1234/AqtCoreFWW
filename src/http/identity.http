@@ -1,0 +1,165 @@
+### ==== IDENTITY API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base routes:
+#   /api/v1/admin/users          — user lifecycle (Admin)
+#   /api/v1/admin/sessions       — token/session admin (Admin)
+#   /api/v1/admin/access-reviews — QĐ742 periodic reviews (Admin)
+#   /api/v1/delegations          — role delegation (Authenticated)
+#   /api/v1/mfa                  — TOTP / email OTP (Authenticated)
+
+# ── Users Admin ──────────────────────────────────────────────────────────────
+
+### List users (paged, optional filters)
+GET {{baseUrl}}/api/v1/admin/users?page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### List users filtered by tenant and search term
+GET {{baseUrl}}/api/v1/admin/users?tenantId={{tenantId}}&search=nguyen&isActive=true&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Get user by ID
+GET {{baseUrl}}/api/v1/admin/users/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+
+###
+
+### Create user (admin-initiated registration)
+POST {{baseUrl}}/api/v1/admin/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "fullName": "Nguyen Van A",
+  "email": "nguyenvana@test.vn",
+  "password": "Test@Password123!",
+  "departmentCode": "DEPT-01",
+  "tenantId": "00000000-0000-0000-0000-000000000001"
+}
+
+###
+
+### Lock user account
+POST {{baseUrl}}/api/v1/admin/users/00000000-0000-0000-0000-000000000001/lock
+Authorization: Bearer {{token}}
+
+###
+
+### Unlock user account
+POST {{baseUrl}}/api/v1/admin/users/00000000-0000-0000-0000-000000000001/unlock
+Authorization: Bearer {{token}}
+
+###
+
+### Admin-initiated password reset (sends reset email)
+POST {{baseUrl}}/api/v1/admin/users/00000000-0000-0000-0000-000000000001/reset-password
+Authorization: Bearer {{token}}
+
+# ── Sessions Admin ───────────────────────────────────────────────────────────
+
+###
+
+### List active sessions (all users)
+GET {{baseUrl}}/api/v1/admin/sessions/active
+Authorization: Bearer {{token}}
+
+###
+
+### List active sessions for a specific user
+GET {{baseUrl}}/api/v1/admin/sessions/active?userId=00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+
+###
+
+### Revoke a single token by OpenIddict token ID
+DELETE {{baseUrl}}/api/v1/admin/sessions/TOKEN_ID_HERE
+Authorization: Bearer {{token}}
+
+###
+
+### Revoke all sessions for a user (force re-login on all devices)
+DELETE {{baseUrl}}/api/v1/admin/sessions/user/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+
+# ── Access Reviews (QĐ742) ───────────────────────────────────────────────────
+
+###
+
+### List pending access reviews
+GET {{baseUrl}}/api/v1/admin/access-reviews/pending?page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### List pending reviews for a specific tenant
+GET {{baseUrl}}/api/v1/admin/access-reviews/pending?tenantId={{tenantId}}&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+###
+
+### Approve access review (retain user's role)
+POST {{baseUrl}}/api/v1/admin/access-reviews/00000000-0000-0000-0000-000000000001/approve
+Authorization: Bearer {{token}}
+
+###
+
+### Reject access review (mark role for revocation)
+POST {{baseUrl}}/api/v1/admin/access-reviews/00000000-0000-0000-0000-000000000001/reject
+Authorization: Bearer {{token}}
+
+# ── Role Delegations ─────────────────────────────────────────────────────────
+
+###
+
+### List delegations (filter by delegatorId or delegateId)
+GET {{baseUrl}}/api/v1/delegations?activeOnly=true
+Authorization: Bearer {{token}}
+
+###
+
+### Create role delegation (bounded time window)
+POST {{baseUrl}}/api/v1/delegations
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "delegatorId": "00000000-0000-0000-0000-000000000001",
+  "delegateId": "00000000-0000-0000-0000-000000000002",
+  "validFrom": "2026-03-14T00:00:00Z",
+  "validTo": "2026-03-21T00:00:00Z",
+  "reason": "Annual leave coverage"
+}
+
+###
+
+### Revoke delegation
+DELETE {{baseUrl}}/api/v1/delegations/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+
+# ── MFA ──────────────────────────────────────────────────────────────────────
+
+###
+
+### Get TOTP setup URI (render as QR code in client)
+GET {{baseUrl}}/api/v1/mfa/setup
+Authorization: Bearer {{token}}
+
+###
+
+### Verify TOTP code from authenticator app
+POST {{baseUrl}}/api/v1/mfa/verify
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "code": "123456"
+}
+
+###
+
+### Send email OTP (enqueues Hangfire job)
+POST {{baseUrl}}/api/v1/mfa/send-otp
+Authorization: Bearer {{token}}

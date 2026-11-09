@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Rules.Infrastructure</AssemblyName>
+    <RootNamespace>AqtCoreFW.Rules.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>AqtCoreFW.Rules.Integration.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+    <PackageReference Include="RulesEngine" />
+    <ProjectReference Include="..\AqtCoreFW.Rules.Application\AqtCoreFW.Rules.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Infrastructure\AqtCoreFW.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.RuleEngine.Contracts\AqtCoreFW.RuleEngine.Contracts.csproj" />
+  </ItemGroup>
+</Project>

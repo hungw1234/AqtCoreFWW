@@ -1,0 +1,74 @@
+. Mục tiêu thiết kế versioning
+
+Thiết kế versioning cần đáp ứng 6 yêu cầu chính:
+
+Một là, truy vết đầy đủ.
+Biết được ai tạo, ai sửa, sửa cái gì, lúc nào, theo đợt nào, trước và sau khác nhau ra sao.
+
+Hai là, không ghi đè dữ liệu đã trình.
+Khi biểu đã trình thẩm định hoặc đã duyệt thì không được sửa trực tiếp trên bản đó. Muốn sửa phải sinh phiên bản mới.
+
+Ba là, hỗ trợ làm việc nhiều cấp.
+Đơn vị lập dự toán, cơ quan thẩm định, cấp duyệt cuối có thể cùng tham gia nhưng vẫn tách được trách nhiệm từng vòng.
+
+Bốn là, cho phép quay lại lịch sử.
+Có thể mở lại phiên bản cũ để xem, so sánh, sao chép làm bản mới.
+
+Năm là, phù hợp nghiệp vụ ngân sách.
+Một biểu có thể bị trả lại nhiều lần, chỉnh sửa nhiều vòng, thậm chí sau khi duyệt lại có điều chỉnh bổ sung.
+
+Sáu là, phục vụ thanh tra, kiểm toán, hậu kiểm.
+Bản nào là bản trình chính thức, bản nào là bản nội bộ, bản nào là bản được duyệt cuối cùng phải phân biệt tuyệt đối rõ.
+
+2. Tư duy thiết kế đúng
+
+Không nên thiết kế versioning theo kiểu đơn giản:
+
+Người dùng mở biểu
+Sửa trực tiếp
+Hệ thống chỉ lưu log
+
+Cách này không đủ cho bài toán nhà nước.
+
+Nên thiết kế theo mô hình:
+
+2.1. Một “hồ sơ biểu” có nhiều phiên bản
+
+Ví dụ:
+
+Hồ sơ biểu dự toán chi thường xuyên năm 2027 của Sở Tài chính Hà Nội
+Trong hồ sơ đó có:
+Bản nháp lần 1
+Bản trình lần 1
+Bản bị trả lại
+Bản chỉnh sửa lần 2
+Bản thẩm định
+Bản duyệt cuối
+
+Tức là:
+
+Hồ sơ = thực thể nghiệp vụ gốc
+Phiên bản = các trạng thái/bản ghi theo từng lần thay đổi có ý nghĩa nghiệp vụ
+
+2.2. Tách version nội bộ và version chính thức
+
+Nên có 2 lớp:
+
+Working version: bản đang chỉnh sửa nội bộ
+Official version: bản đã chốt để trình/thẩm định/duyệt
+
+Như vậy tránh việc mỗi lần gõ một ô là nhảy version chính thức, gây rối.
+
+2.3. Phiên bản phải gắn với hành vi nghiệp vụ
+
+Version mới nên sinh ra khi có các sự kiện như:
+
+Khởi tạo biểu
+Gửi trình
+Trả lại để sửa
+Chốt thẩm định
+Trình duyệt
+Phê duyệt
+Điều chỉnh sau duyệt
+
+Chứ không chỉ sinh theo từng thao tác sửa nhỏ.

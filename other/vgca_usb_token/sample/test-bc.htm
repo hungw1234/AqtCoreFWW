@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Demo</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./base64.js"></script>
+    <script type="text/javascript" src="./vgcaplugin.js"></script>
+    <script type="text/javascript">
+        function GetVersionCallBack(rv) {
+            var received_msg = JSON.parse(rv);
+            if (received_msg.Status == 0) {
+                document.getElementById("_signature").value = received_msg.Version;
+            } else {
+                alert("Ký số không thành công:" + received_msg.Status + ":" + received_msg.Message);
+            }
+        }
+		
+		function exc_get_version() {
+            try {
+                vgca_get_version(GetVersionCallBack);
+            } catch (err)
+            {
+                var prms = {};
+                prms["Status"] = 503;
+                prms["Message"] = err.message; 
+                GetVersionCallBack(JSON.stringify(prms));
+            }
+        }
+		
+        function SignCallBack(sender, rv) {
+            var received_msg = JSON.parse(rv);
+			if(received_msg.Status == 0){
+				document.getElementById("_signature").value = received_msg.Signature;
+				document.getElementById("_verifier").value = received_msg.CertBase64;
+			}else{
+			    alert("Ký số không thành công:" + received_msg.Status + ":" + received_msg.Message);
+			}
+        }
+
+        function exc_sign_msg(sender) {
+		//NoiDung = "Hello word"
+            //bytes=Encoding.UTF8.GetBytes(NoiDung)=>hash=sha245.Hash(bytes)=> hash_value=Convert.ToBase64String(hash);
+			var content="eyJTb0NDQ0QiOiIwMzEwOTgwMDIxMTMiLCJIb1NvQ0JDQ1ZDIjp7IlNvSGlldUNCQ0NWQ0RWU0QiOiIwMzEwOTgwMDIxMTMiLCJBbmhDYU5oYW4iOiIxMTc2MDIiLCJOb2lTaW5oIjp7IkRvblZpSGFuaENoaW5oVGluaCI6IjAxIiwiRG9uVmlIYW5oQ2hpbmhIdXllbiI6IjAwMSIsIkRvblZpSGFuaENoaW5oWGEiOiIwMDAwMSJ9LCJRdWVRdWFuIjp7IkRvblZpSGFuaENoaW5oVGluaCI6IjAxIiwiRG9uVmlIYW5oQ2hpbmhIdXllbiI6IjAwMSIsIkRvblZpSGFuaENoaW5oWGEiOiIwMDAwMSJ9LCJTb0NDQ0QiOiIwMzEwOTgwMDIxMTMiLCJOZ2F5Q2FwQ0NDRCI6IjIwMjMtMDgtMjkwMDowMDowMC4wIiwiTm9pTyI6eyJEb25WaUhhbmhDaGluaFRpbmgiOiIwMSIsIkRvblZpSGFuaENoaW5oSHV5ZW4iOiIwMDEiLCJEb25WaUhhbmhDaGluaFhhIjoiMDAwMDEifSwiTmdheVZhb0NvUXVhbkhpZW5OYXkiOiIyMDIzLTExLTAxMDA6MDA6MDAuMCIsIkNodWNWdVF1eUhvYWNoIjpbbnVsbF0sIkNodWNWdUtpZW1OaGllbSI6W251bGxdLCJOYW5nTHVjU29UcnVvbmciOiJT4bufdHLGsOG7nW5nY8O0bmd0w6FjIiwiQ29uZ1ZpZWNMYW1MYXVOaGF0IjoiQ8O0bmd2aeG7h2Nsw6BtbMOidW5o4bqldCIsIlRpbmhUcmFuZ1N1Y0tob2UiOiJUw6xuaHRy4bqhbmdz4bupY2to4buPZSIsIkNoaWV1Q2FvIjoyLCJDYW5OYW5nIjoxLCJEYW9UYW9Cb2lEdW9uZyI6eyJDaHV5ZW5Nb24iOlt7IlR1TmdheSI6IjAyLzIwMjAiLCJDb1NvRGFvVGFvIjoiQ1MwMSIsIkhpbmhUaHVjRGFvVGFvIjoiMDEiLCJUcmluaERvQ2FvTmhhdCI6IjEifSx7IlR1TmdheSI6IjA2LzIwMjMiLCJDb1NvRGFvVGFvIjoiMjYwNyIsIkhpbmhUaHVjRGFvVGFvIjoiMDIiLCJUcmluaERvQ2FvTmhhdCI6IjAifV0sIkx5THVhbkNoaW5oVHJpIjpbXSwiUXVhbkx5TmhhTnVvY05naGllcFZ1Q2h1eWVuTmdhbmgiOltdLCJRdW9jUGhvbmdBbk5pbmgiOltdLCJOZ29haU5ndVRpZW5nRGFuVG9jIjpbXSwiVGluSG9jIjpbXX0sIlF1YVRyaW5oQ29uZ1RhYyI6W3siVHVOZ2F5IjoiMTAvMjAyMyIsIkRlbk5nYXkiOiIxMC8yMDIzIiwiVGVuRG9uVmlDb25nVGFjIjoiVMOqbnThu5VjaOG7qWMiLCJUZW5DaHVjRGFuaCI6IkLDrXRoxrAiLCJMb2FpRG9uVmkiOjB9LHsiVHVOZ2F5IjoiMTAvMjAyMyIsIkRlbk5nYXkiOiIxMC8yMDIzIiwiVGVuRG9uVmlDb25nVGFjIjoiMTAxMCIsIlRlbkNodWNEYW5oIjoiQsOtdGjGsCIsIkxvYWlEb25WaSI6MH0seyJUdU5nYXkiOiIxMS8yMDIzIiwiRGVuTmdheSI6IjMwLTExLTIwMjMiLCJUZW5Eb25WaUNvbmdUYWMiOiJC4buZR2lhb3Row7RuZ3bhuq1udOG6o2kiLCJMb2FpRG9uVmkiOjB9XSwiTGljaFN1QmFuVGhhbiI6eyJDaGVEb0N1IjpbXSwiVGhhbUdpYVRvQ2h1Y051b2NOZ29haSI6W3siVHVOZ2F5IjoiMTAvMjAyMyIsIkRlbk5nYXkiOiIxMC8yMDIzIiwiQ2hpVGlldCI6IlTDqm504buVY2jhu6ljOjEwMTBcbsSQ4buLYWNo4buJOjEwMTBcbkPDtG5ndmnhu4djOkLDrXRoxrAifV19LCJLaGVuVGh1b25nS3lMdWF0Ijp7IktoZW5UaHVvbmciOltdLCJLeUx1YXQiOltdfSwiUXVhbkhlR2lhRGluaCI6eyJCYW5UaGFuIjpbeyJNb2lRdWFuSGUiOiIwNF9MIiwiSG9WYVRlbiI6IkEiLCJOYW1TaW5oIjoiMTk2NCIsIkNoaVRpZXQiOiJNaW5oxJDhu6ljTeG7uUjDoG9IxrBuZ1nDqm4sTWluaMSQ4bupY03hu7lIw6BvSMawbmdZw6puIn1dLCJCZW5Wb0hvYWNDaG9uZyI6W3siTW9pUXVhbkhlIjoiMDNfUiIsIkhvVmFUZW4iOiJCw7lpxJDDrG5oxJDhuq9jIiwiTmFtU2luaCI6IjE5NjQiLCJDaGlUaWV0IjoiSMOgTuG7mWksSMOgTuG7mWkifV19LCJIb2FuQ2FuaEtpbmhUZUdpYURpbmgiOnsiUXVhVHJpbmhMdW9uZyI6W3siTG9haUx1b25nIjoiMCIsIk1hU28iOiIwIiwiTmdheUJvTmhpZW1OZ2FjaENodWNEYW5oTmdoZU5naGllcCI6IjIwMjItMDktMDEwMDowMDowMC4wIiwiUGhhblRyYW1IdW9uZyI6MCwiU29UaWVuIjowLCJIZVNvTHVvbmciOjAsIlBodUNhcFROVksiOjB9XSwiUXVhVHJpbmhQaHVDYXAiOlt7IlR1TmdheSI6IjA1LzIwMTAiLCJMb2FpUGh1Q2FwIjoiMTkiLCJIZVNvIjowLCJQaGFuVHJhbUh1b25nIjowLCJHaWFUcmkiOjB9XSwiTmd1b25UaHVOaGFwQ2hpbmgiOnsiVGh1TmhhcEx1b25nIjoiMTAsMDAwLDAwMCIsIlRodU5oYXBLaGFjIjoiNTAwMDAwMCIsIk5oYU8iOlt7IkNoaVRpZXQiOiIzIiwiRGllblRpY2giOiIyIiwiR2lheUNodW5nTmhhbiI6IjEuTmjDoHThu7FtdWEsdOG7sXjDonkobG/huqFpbmjDoCk6bmjDoDJ04bqnbmdcblThu5VuZ2Rp4buHbnTDrWNoc+G7rWThu6VuZzoxMjBtMlxuR2nhuqV5Y2jhu6luZ25o4bqtbnF1eeG7gW5z4bufaOG7r3U6R0NObTJcbiIsIkxvYWlEYXQiOiIxIn1dLCJEYXRPIjpbeyJEaWVuVGljaCI6IjEyMyIsIkdpYXlDaHVuZ05oYW4iOiIxLsSQ4bqldHThu7FtdWE6MTIzbTJcbkdp4bqleWNo4bupbmduaOG6rW5xdXnhu4Fuc+G7rWThu6VuZzoxMjNtMlxuIiwiTG9haURhdCI6MH1dfX19fQ==";
+
+            var hash_value = "nxUr1a6P0JXEBtmpNRwJPy/Twc+22fIeqh1R9jYVqmA=";
+			var hash_alg = "SHA256";			
+            var prms = {};
+            prms["HashAlg"] = hash_alg;
+            prms["HashValue"] = hash_value;
+			prms["Encode"] = "RSA";
+            var json_prms = JSON.stringify(prms);
+            vgca_sign_msg(sender, json_prms, SignCallBack);
+        }
+
+	
+		
+        function exc_verify_msg(sender) {
+            var prms = {};
+			//content = Encoding.UTF8.GetBytes(NoiDung)
+			var content="eyJTb0NDQ0QiOiIwMzEwOTgwMDIxMTMiLCJIb1NvQ0JDQ1ZDIjp7IlNvSGlldUNCQ0NWQ0RWU0QiOiIwMzEwOTgwMDIxMTMiLCJBbmhDYU5oYW4iOiIxMTc2MDIiLCJOb2lTaW5oIjp7IkRvblZpSGFuaENoaW5oVGluaCI6IjAxIiwiRG9uVmlIYW5oQ2hpbmhIdXllbiI6IjAwMSIsIkRvblZpSGFuaENoaW5oWGEiOiIwMDAwMSJ9LCJRdWVRdWFuIjp7IkRvblZpSGFuaENoaW5oVGluaCI6IjAxIiwiRG9uVmlIYW5oQ2hpbmhIdXllbiI6IjAwMSIsIkRvblZpSGFuaENoaW5oWGEiOiIwMDAwMSJ9LCJTb0NDQ0QiOiIwMzEwOTgwMDIxMTMiLCJOZ2F5Q2FwQ0NDRCI6IjIwMjMtMDgtMjkwMDowMDowMC4wIiwiTm9pTyI6eyJEb25WaUhhbmhDaGluaFRpbmgiOiIwMSIsIkRvblZpSGFuaENoaW5oSHV5ZW4iOiIwMDEiLCJEb25WaUhhbmhDaGluaFhhIjoiMDAwMDEifSwiTmdheVZhb0NvUXVhbkhpZW5OYXkiOiIyMDIzLTExLTAxMDA6MDA6MDAuMCIsIkNodWNWdVF1eUhvYWNoIjpbbnVsbF0sIkNodWNWdUtpZW1OaGllbSI6W251bGxdLCJOYW5nTHVjU29UcnVvbmciOiJT4bufdHLGsOG7nW5nY8O0bmd0w6FjIiwiQ29uZ1ZpZWNMYW1MYXVOaGF0IjoiQ8O0bmd2aeG7h2Nsw6BtbMOidW5o4bqldCIsIlRpbmhUcmFuZ1N1Y0tob2UiOiJUw6xuaHRy4bqhbmdz4bupY2to4buPZSIsIkNoaWV1Q2FvIjoyLCJDYW5OYW5nIjoxLCJEYW9UYW9Cb2lEdW9uZyI6eyJDaHV5ZW5Nb24iOlt7IlR1TmdheSI6IjAyLzIwMjAiLCJDb1NvRGFvVGFvIjoiQ1MwMSIsIkhpbmhUaHVjRGFvVGFvIjoiMDEiLCJUcmluaERvQ2FvTmhhdCI6IjEifSx7IlR1TmdheSI6IjA2LzIwMjMiLCJDb1NvRGFvVGFvIjoiMjYwNyIsIkhpbmhUaHVjRGFvVGFvIjoiMDIiLCJUcmluaERvQ2FvTmhhdCI6IjAifV0sIkx5THVhbkNoaW5oVHJpIjpbXSwiUXVhbkx5TmhhTnVvY05naGllcFZ1Q2h1eWVuTmdhbmgiOltdLCJRdW9jUGhvbmdBbk5pbmgiOltdLCJOZ29haU5ndVRpZW5nRGFuVG9jIjpbXSwiVGluSG9jIjpbXX0sIlF1YVRyaW5oQ29uZ1RhYyI6W3siVHVOZ2F5IjoiMTAvMjAyMyIsIkRlbk5nYXkiOiIxMC8yMDIzIiwiVGVuRG9uVmlDb25nVGFjIjoiVMOqbnThu5VjaOG7qWMiLCJUZW5DaHVjRGFuaCI6IkLDrXRoxrAiLCJMb2FpRG9uVmkiOjB9LHsiVHVOZ2F5IjoiMTAvMjAyMyIsIkRlbk5nYXkiOiIxMC8yMDIzIiwiVGVuRG9uVmlDb25nVGFjIjoiMTAxMCIsIlRlbkNodWNEYW5oIjoiQsOtdGjGsCIsIkxvYWlEb25WaSI6MH0seyJUdU5nYXkiOiIxMS8yMDIzIiwiRGVuTmdheSI6IjMwLTExLTIwMjMiLCJUZW5Eb25WaUNvbmdUYWMiOiJC4buZR2lhb3Row7RuZ3bhuq1udOG6o2kiLCJMb2FpRG9uVmkiOjB9XSwiTGljaFN1QmFuVGhhbiI6eyJDaGVEb0N1IjpbXSwiVGhhbUdpYVRvQ2h1Y051b2NOZ29haSI6W3siVHVOZ2F5IjoiMTAvMjAyMyIsIkRlbk5nYXkiOiIxMC8yMDIzIiwiQ2hpVGlldCI6IlTDqm504buVY2jhu6ljOjEwMTBcbsSQ4buLYWNo4buJOjEwMTBcbkPDtG5ndmnhu4djOkLDrXRoxrAifV19LCJLaGVuVGh1b25nS3lMdWF0Ijp7IktoZW5UaHVvbmciOltdLCJLeUx1YXQiOltdfSwiUXVhbkhlR2lhRGluaCI6eyJCYW5UaGFuIjpbeyJNb2lRdWFuSGUiOiIwNF9MIiwiSG9WYVRlbiI6IkEiLCJOYW1TaW5oIjoiMTk2NCIsIkNoaVRpZXQiOiJNaW5oxJDhu6ljTeG7uUjDoG9IxrBuZ1nDqm4sTWluaMSQ4bupY03hu7lIw6BvSMawbmdZw6puIn1dLCJCZW5Wb0hvYWNDaG9uZyI6W3siTW9pUXVhbkhlIjoiMDNfUiIsIkhvVmFUZW4iOiJCw7lpxJDDrG5oxJDhuq9jIiwiTmFtU2luaCI6IjE5NjQiLCJDaGlUaWV0IjoiSMOgTuG7mWksSMOgTuG7mWkifV19LCJIb2FuQ2FuaEtpbmhUZUdpYURpbmgiOnsiUXVhVHJpbmhMdW9uZyI6W3siTG9haUx1b25nIjoiMCIsIk1hU28iOiIwIiwiTmdheUJvTmhpZW1OZ2FjaENodWNEYW5oTmdoZU5naGllcCI6IjIwMjItMDktMDEwMDowMDowMC4wIiwiUGhhblRyYW1IdW9uZyI6MCwiU29UaWVuIjowLCJIZVNvTHVvbmciOjAsIlBodUNhcFROVksiOjB9XSwiUXVhVHJpbmhQaHVDYXAiOlt7IlR1TmdheSI6IjA1LzIwMTAiLCJMb2FpUGh1Q2FwIjoiMTkiLCJIZVNvIjowLCJQaGFuVHJhbUh1b25nIjowLCJHaWFUcmkiOjB9XSwiTmd1b25UaHVOaGFwQ2hpbmgiOnsiVGh1TmhhcEx1b25nIjoiMTAsMDAwLDAwMCIsIlRodU5oYXBLaGFjIjoiNTAwMDAwMCIsIk5oYU8iOlt7IkNoaVRpZXQiOiIzIiwiRGllblRpY2giOiIyIiwiR2lheUNodW5nTmhhbiI6IjEuTmjDoHThu7FtdWEsdOG7sXjDonkobG/huqFpbmjDoCk6bmjDoDJ04bqnbmdcblThu5VuZ2Rp4buHbnTDrWNoc+G7rWThu6VuZzoxMjBtMlxuR2nhuqV5Y2jhu6luZ25o4bqtbnF1eeG7gW5z4bufaOG7r3U6R0NObTJcbiIsIkxvYWlEYXQiOiIxIn1dLCJEYXRPIjpbeyJEaWVuVGljaCI6IjEyMyIsIkdpYXlDaHVuZ05oYW4iOiIxLsSQ4bqldHThu7FtdWE6MTIzbTJcbkdp4bqleWNo4bupbmduaOG6rW5xdXnhu4Fuc+G7rWThu6VuZzoxMjNtMlxuIiwiTG9haURhdCI6MH1dfX19fQ==";
+			prms["Base64Content"] = content;
+			prms["Encode"] = "RSA";			
+			prms["SignerCert"] = document.getElementById("_verifier").value; 
+			prms["Signature"] = document.getElementById("_signature").value;			
+			var json_prms = JSON.stringify(prms);
+
+            vgca_verify_msg(json_prms, verifyCallBack);
+        }
+		
+		function verifyCallBack(rv) {
+            var received_msg = JSON.parse(rv);
+			if(received_msg.Status == 0){
+				 document.getElementById("_verifier").value = JSON.stringify(rv);
+				 //alert("Ok");
+			}else{
+			    alert(rv);
+			}
+        }
+    </script>
+</head>
+<body>
+    <form id="message_form">
+
+        <div id="page-wrapper">
+            <h1>Plugin Demo</h1>
+			<h4>Signature:</h4>
+            <p><textarea id="_signature" cols="80" rows="10"></textarea></p>
+			<h4>Base64 Cert:</h4>
+            <p><textarea id="_verifier" cols="80" rows="10"></textarea></p>
+
+			<button type="button" id="_Version" onclick="exc_get_version();">GetVersion</button><br />
+		  
+            <button type="button" id="_Sign1" onclick="exc_sign_msg();">Ký số Hash Value (RSA/ECDSA/PKCS#7)</button><br />
+            
+			<button type="button" id="_Verify" onclick="exc_verify_msg();">Verify</button><br />
+            
+			
+        </div>
+    </form>
+</body>
+</html>

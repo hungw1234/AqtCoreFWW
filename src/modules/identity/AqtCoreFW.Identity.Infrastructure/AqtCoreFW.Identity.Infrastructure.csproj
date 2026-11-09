@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Identity.Infrastructure</AssemblyName>
+    <RootNamespace>AqtCoreFW.Identity.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>AqtCoreFW.Identity.Infrastructure.Tests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>AqtCoreFW.Identity.Integration.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
+    <PackageReference Include="OpenIddict.AspNetCore" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" />
+    <PackageReference Include="OpenIddict.Validation.SystemNetHttp" />
+    <PackageReference Include="Otp.NET" />
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentResults" />
+    <PackageReference Include="Hangfire.Core" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+    <!-- Microsoft.Extensions.Caching.Memory removed: provided transitively via FrameworkReference Microsoft.AspNetCore.App (NU1510 pruning) -->
+    <PackageReference Include="BCrypt.Net-Next" />
+    <!-- BouncyCastle — certificate chain validation + CMS signature verify for QĐ742 §5.1 digital signature (W3/W4) -->
+    <PackageReference Include="BouncyCastle.Cryptography" />
+    <PackageReference Include="Bogus" />
+    <ProjectReference Include="..\AqtCoreFW.Identity.Application\AqtCoreFW.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Infrastructure\AqtCoreFW.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Consent.Contracts\AqtCoreFW.Consent.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Identity.Contracts\AqtCoreFW.Identity.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.OrgUnit.Contracts\AqtCoreFW.OrgUnit.Contracts.csproj" />
+  </ItemGroup>
+</Project>

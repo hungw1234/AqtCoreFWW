@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>AqtCoreFW.Reporting.Application.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/modules/reporting/AqtCoreFW.Reporting.Application/AqtCoreFW.Reporting.Application.csproj" />
+    <ProjectReference Include="../../../src/modules/reporting/AqtCoreFW.Reporting.Infrastructure/AqtCoreFW.Reporting.Infrastructure.csproj" />
+    <ProjectReference Include="../../../src/modules/reporting/AqtCoreFW.Reporting.Domain/AqtCoreFW.Reporting.Domain.csproj" />
+  </ItemGroup>
+</Project>

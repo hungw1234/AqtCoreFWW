@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>AqtCoreFW.Workflow.Application.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="FluentResults" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/modules/workflow/AqtCoreFW.Workflow.Application/AqtCoreFW.Workflow.Application.csproj" />
+    <ProjectReference Include="../../../src/modules/workflow/AqtCoreFW.Workflow.Domain/AqtCoreFW.Workflow.Domain.csproj" />
+    <ProjectReference Include="../../../src/shared/AqtCoreFW.SharedKernel/AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="../../../src/shared/AqtCoreFW.SharedKernel.Contracts/AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <ProjectReference Include="../../../src/shared/AqtCoreFW.OrgUnit.Contracts/AqtCoreFW.OrgUnit.Contracts.csproj" />
+  </ItemGroup>
+</Project>

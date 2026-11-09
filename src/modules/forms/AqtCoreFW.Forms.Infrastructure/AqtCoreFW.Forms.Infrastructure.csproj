@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Forms.Infrastructure</AssemblyName>
+    <RootNamespace>AqtCoreFW.Forms.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Cascade v1: expose internal pure helpers (BuildRequestUrl/BuildCacheKey/ApplyParentFilter)
+         to the unit-test assembly so cascade filter semantics are testable without HTTP/reflection. -->
+    <InternalsVisibleTo Include="AqtCoreFW.Forms.Infrastructure.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NCalcSync" />
+    <PackageReference Include="QuestPDF" />
+    <ProjectReference Include="..\AqtCoreFW.Forms.Application\AqtCoreFW.Forms.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Infrastructure\AqtCoreFW.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Forms.Contracts\AqtCoreFW.Forms.Contracts.csproj" />
+  </ItemGroup>
+</Project>

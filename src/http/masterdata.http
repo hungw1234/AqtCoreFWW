@@ -1,0 +1,66 @@
+### ==== MASTER DATA API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base route: /api/v1/masterdata
+# Province/District/Ward — served from IMemoryCache (sub-1ms, AllowAnonymous)
+# AdminUnits — IMemoryCache NeverRemove (AllowAnonymous)
+# CaseType/JobTitle — OutputCache 30min (Authenticated)
+
+# ── Province / District / Ward ───────────────────────────────────────────────
+
+### List all active provinces
+GET {{baseUrl}}/api/v1/masterdata/provinces
+
+###
+
+### List districts for a province
+GET {{baseUrl}}/api/v1/masterdata/provinces/01/districts
+
+###
+
+### List wards for a district
+GET {{baseUrl}}/api/v1/masterdata/provinces/01/districts/001/wards
+
+# ── Administrative Units ─────────────────────────────────────────────────────
+
+###
+
+### Get admin units at level 1 (root)
+GET {{baseUrl}}/api/v1/masterdata/admin-units?level=1
+
+###
+
+### Get admin units at level 2 under a parent
+GET {{baseUrl}}/api/v1/masterdata/admin-units?level=2&parentCode=VN
+
+###
+
+### Resolve successor for a merged/renamed admin unit
+GET {{baseUrl}}/api/v1/masterdata/admin-units/568/successor
+
+# ── Case Types ───────────────────────────────────────────────────────────────
+
+###
+
+### List all active case types (global + tenant-scoped)
+GET {{baseUrl}}/api/v1/masterdata/case-types
+Authorization: Bearer {{token}}
+
+###
+
+### List case types for a specific tenant
+GET {{baseUrl}}/api/v1/masterdata/case-types?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+# ── Job Titles ───────────────────────────────────────────────────────────────
+
+###
+
+### List all active job titles
+GET {{baseUrl}}/api/v1/masterdata/job-titles
+Authorization: Bearer {{token}}
+
+###
+
+### List job titles for a specific tenant
+GET {{baseUrl}}/api/v1/masterdata/job-titles?tenantId={{tenantId}}
+Authorization: Bearer {{token}}

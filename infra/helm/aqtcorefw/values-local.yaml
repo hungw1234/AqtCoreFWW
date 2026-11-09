@@ -1,0 +1,151 @@
+# Local Docker Desktop kind cluster overrides — plan 260723-1258-k8s-local-stable-monolith-deploy.
+# P2 posture: Production environment + RabbitMQ transport + VNeID stub explicitly allowed
+# (rehearsal-only escape hatch). Precondition: scripts/k8s-local-generate-prod-secrets.sh has
+# replaced the AAAA... dev markers in Vault — ProductionSecretValidator rejects them at boot.
+replicaCount: 1
+
+image:
+  repository: aqtcorefw/api
+  tag: local
+  # Images must be imported into the node's containerd manually (probe 2026-07-23:
+  # the containerd image store does NOT share docker-built images with the cluster —
+  # see infra/k8s-local/README.md §Facts). Never makes a missing import fail loudly
+  # instead of silently pulling something else.
+  pullPolicy: Never
+  pullSecrets: []
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: api.aqt.localtest.me   # *.localtest.me resolves to 127.0.0.1 — no hosts-file edit
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []   # plain HTTP locally
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
+
+# Production boots skip the demo seeders, but the generous window stays: a future
+# Development flip (rollback path) reuses it, and migrations on first boot still take time.
+startupProbe:
+  httpGet:
+    path: /health/live
+    port: 8080
+  periodSeconds: 10
+  failureThreshold: 60
+
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Production            # P2: first-ever ProductionSecretValidator exercise
+  - name: ConnectionStrings__Default
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: db-connection-string
+  - name: Redis__ConnectionString
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: redis-connection-string
+  - name: Auth__AuthorityUrl
+    valueFrom:
+      configMapKeyRef:
+        name: aqtcorefw-config
+        key: auth-authority-url
+  - name: SKIP_STARTUP_MIGRATIONS
+    value: "false"
+
+extraEnv:
+  # The unsigned-backlog readiness check reads via the elevated AuditAdmin connection
+  # (RLS-bypass count) — without it the pod never turns Ready (falls back to the
+  # appsettings localhost value, unreachable in-cluster).
+  - name: ConnectionStrings__AuditAdmin
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: audit-admin-connection-string
+  # Local Vault auth: token (dev-mode Vault); prod uses AppRole via the chart secret.
+  - name: VAULT_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: vault-token
+  - name: Vault__Address
+    value: "http://vault.aqt-data.svc.cluster.local:8200"
+  # The Deployment does NOT envFrom the ConfigMap — config.extra reaches only the migrate
+  # Job. The API pod needs the same rehearsal escape hatch here explicitly.
+  - name: VneId__AllowStub
+    value: "true"
+  # Plain-HTTP local ingress: skip the HTTPS redirect (existing ForceHttps flag,
+  # default true — real production keeps it on).
+  - name: ForceHttps
+    value: "false"
+  # Files module backing services — in-cluster hostnames + real creds (defaults point at
+  # localhost/minioadmin; caught on the first Production boot: ClamAV startup check Fatal
+  # "Connection refused localhost:3310").
+  - name: ClamAV__Host
+    value: "clamav.aqt-data.svc.cluster.local"
+  - name: MinIO__Endpoint
+    value: "minio.aqt-data.svc.cluster.local:9000"
+  - name: MinIO__AccessKey
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: minio-access-key
+  - name: MinIO__SecretKey
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: minio-secret-key
+  # P2: real broker — MassTransit consumers AND the transport-gated rabbit health check
+  # both go through RabbitMQ now (row RABBITMQ-HEALTHCHECK-LIVE-BROKER-VERIFY).
+  - name: Bus__Transport
+    value: "RabbitMQ"
+  - name: Bus__RabbitMq__Host
+    value: "rabbitmq.aqt-data.svc.cluster.local"
+  # Username/Password stay on the guest/guest defaults baked into the local rabbitmq
+  # Deployment (infra/k8s-local/rabbitmq.yaml) — non-secret in this ephemeral cluster.
+
+config:
+  # The db-migrate hook Job reads its env from this ConfigMap (envFrom) — every
+  # environment-sensitive gate the Job's DI build hits must live HERE, not only in the
+  # Deployment's env list.
+  aspnetcoreEnvironment: "Production"    # P2: Job + Deployment both run Production now
+  authAuthorityUrl: "http://auth.aqt.localtest.me"
+  allowedHosts: "*"
+  gatewayMode: "Disabled"
+  extra:
+    # Rehearsal-only escape hatch (default false in code): lets the Production-mode boot
+    # register the VNeID stub while VNeIdHttpConnector does not exist yet. NEVER set in a
+    # real production values file — see IdentityInfrastructureRegistration.IsVneIdStubAllowed.
+    VneId__AllowStub: "true"
+    # Non-secret Vault address for the migrate Job (Production boot runs the secret
+    # validator, which needs Vault-sourced keys; the Job gets VAULT_TOKEN from the
+    # external Secret via its own optional env entry).
+    Vault__Address: "http://vault.aqt-data.svc.cluster.local:8200"
+
+# kindnet (Docker Desktop kind default CNI) does NOT enforce NetworkPolicy — enabling it
+# here would apply objects that silently no-op, i.e. a false green. Kept OFF for honesty;
+# netpol verification happens only on Calico/staging (deployment-guide §2 carve-out).
+networkPolicy:
+  enabled: false
+
+# P3: selectors read from the LIVE Prometheus CR (2026-07-23, kube-prometheus-stack release
+# "kps"): ruleSelector AND serviceMonitorSelector both = matchLabels {release: kps};
+# both namespace selectors = {} (ALL namespaces) — so objects here in aqt-app are picked up
+# iff they carry the release label. Wrong/missing label = object exists but is silently
+# never loaded (negative control demonstrated in the P3 run).
+metrics:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: kps
+  prometheusRule:
+    enabled: true
+    labels:
+      release: kps

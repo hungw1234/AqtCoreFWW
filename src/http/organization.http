@@ -1,0 +1,112 @@
+### ==== ORGANIZATION API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base routes:
+#   /api/v1/admin/org/units    — org unit CRUD + tree + members (Admin for writes)
+#   /api/v1/admin/org/staff    — staff assignment + transfer + history (Admin only)
+#
+# All endpoints require tenantId as query param.
+# Org unit tree: flat list — clients build hierarchy from parentId field.
+
+# ── Org Units ────────────────────────────────────────────────────────────────
+
+### Get full org unit tree (flat list, build hierarchy from parentId)
+GET {{baseUrl}}/api/v1/admin/org/units?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Get single org unit by ID
+GET {{baseUrl}}/api/v1/admin/org/units/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Get active members of an org unit
+GET {{baseUrl}}/api/v1/admin/org/units/00000000-0000-0000-0000-000000000001/members?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Create org unit (Admin/SystemAdmin)
+POST {{baseUrl}}/api/v1/admin/org/units?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Phòng Quản lý Đất đai",
+  "nameEn": "Land Management Department",
+  "code": "LMD-001",
+  "parentId": null
+}
+
+###
+
+### Create child org unit under a parent
+POST {{baseUrl}}/api/v1/admin/org/units?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Bộ phận Cấp phép",
+  "nameEn": "Licensing Division",
+  "code": "LMD-001-LIC",
+  "parentId": "00000000-0000-0000-0000-000000000001"
+}
+
+###
+
+### Update org unit name fields (Admin/SystemAdmin)
+PUT {{baseUrl}}/api/v1/admin/org/units/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Phòng Quản lý Đất đai và Tài nguyên",
+  "nameEn": "Land and Resource Management Department"
+}
+
+###
+
+### Soft-delete org unit (Admin/SystemAdmin — blocked if active children exist)
+DELETE {{baseUrl}}/api/v1/admin/org/units/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Soft-delete with successor unit (reassigns members)
+DELETE {{baseUrl}}/api/v1/admin/org/units/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}&successorId=00000000-0000-0000-0000-000000000002
+Authorization: Bearer {{token}}
+
+# ── Staff Assignments ────────────────────────────────────────────────────────
+
+###
+
+### Assign user to an org unit with role and position title (Admin/SystemAdmin)
+POST {{baseUrl}}/api/v1/admin/org/staff/00000000-0000-0000-0000-000000000002/assign?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "orgUnitId": "00000000-0000-0000-0000-000000000001",
+  "roleInOrg": "Officer",
+  "positionTitle": "Chuyên viên Quản lý Đất đai"
+}
+
+###
+
+### Transfer user to a new org unit (closes old assignment, opens new one)
+POST {{baseUrl}}/api/v1/admin/org/staff/00000000-0000-0000-0000-000000000002/transfer?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "toOrgUnitId": "00000000-0000-0000-0000-000000000003",
+  "roleInOrg": "SeniorOfficer",
+  "positionTitle": "Chuyên viên Chính"
+}
+
+###
+
+### Get full assignment and position history for a user
+GET {{baseUrl}}/api/v1/admin/org/staff/00000000-0000-0000-0000-000000000002/history?tenantId={{tenantId}}
+Authorization: Bearer {{token}}

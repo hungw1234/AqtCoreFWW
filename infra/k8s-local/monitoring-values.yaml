@@ -1,0 +1,47 @@
+# kube-prometheus-stack values — local Docker Desktop kind ONLY (plan 260723-1258 P3).
+# Single-replica, short retention (enough for a 24-48h soak), kind-noise components off.
+# Grafana admin password comes from the pre-created Secret `grafana-admin` (created by
+# scripts/k8s-local-create-secrets.sh from .env.k8s-local — never committed here).
+
+prometheus:
+  prometheusSpec:
+    replicas: 1
+    retention: 72h
+    resources:
+      requests: { cpu: 100m, memory: 512Mi }
+      limits: { memory: 1536Mi }
+    # IMPORTANT: by default the chart sets *SelectorNilUsesHelmValues=true, which makes the
+    # Prometheus CR select ONLY ServiceMonitors/Rules carrying `release: <release-name>`.
+    # Our app chart's objects live in aqt-app with their own labels — we keep the default
+    # (release-label selection) and put the matching label on the app's objects instead,
+    # so the selector contract is explicit and the negative control (wrong label → rule
+    # silently ignored) stays demonstrable. Namespace selectors default to ALL namespaces
+    # when nil — verified by reading the live CR (phase step 2), not assumed.
+
+alertmanager:
+  alertmanagerSpec:
+    replicas: 1
+  # No receivers configured locally: AqtCoreFWWatchdog fires into the void by design —
+  # the external heartbeat receiver is prod-only (deployment-guide §9 step 4).
+
+grafana:
+  replicas: 1
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+  sidecar:
+    dashboards:
+      enabled: true          # picks up ConfigMaps labeled grafana_dashboard: "1"
+      searchNamespace: ALL   # our dashboards ConfigMap lives in monitoring anyway
+
+# kind single-node: these control-plane scrape targets are unreachable/bind-to-localhost
+# and only generate down-target noise — off for honesty.
+kubeEtcd:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeProxy:
+  enabled: false

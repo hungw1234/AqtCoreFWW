@@ -1,0 +1,37 @@
+# Staging environment overrides
+replicaCount: 1
+
+image:
+  tag: staging-latest
+
+ingress:
+  hosts:
+    - host: api-staging.aqtcorefw.internal
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: aqtcorefw-staging-tls
+      hosts:
+        - api-staging.aqtcorefw.internal
+
+config:
+  authAuthorityUrl: "https://auth-staging.aqtcorefw.internal"
+
+# CORS allowlist — exact origins per tenant FE host. Add a new indexed entry
+# for every new tenant subdomain. If the list grows large or tenants churn,
+# pivot to ADR-008 (ingress same-origin) to drop CORS surface entirely.
+extraEnv:
+  - name: Cors__AllowedOrigins__0
+    value: "https://v26grdnb63-fe-dev.aequitas.dev"
+
+autoscaling:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi

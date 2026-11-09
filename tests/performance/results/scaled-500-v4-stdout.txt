@@ -1,0 +1,60 @@
+running (39m46.9s), 025/500 VUs, 131202 complete and 0 interrupted iterations
+default   [  99% ] 025/500 VUs  39m46.9s/40m00.0s
+
+running (39m47.9s), 021/500 VUs, 131227 complete and 0 interrupted iterations
+default   [  99% ] 021/500 VUs  39m47.9s/40m00.0s
+
+running (39m48.9s), 021/500 VUs, 131230 complete and 0 interrupted iterations
+default   [ 100% ] 021/500 VUs  39m48.9s/40m00.0s
+
+running (39m49.9s), 018/500 VUs, 131249 complete and 0 interrupted iterations
+default   [ 100% ] 018/500 VUs  39m49.9s/40m00.0s
+
+running (39m50.9s), 018/500 VUs, 131257 complete and 0 interrupted iterations
+default   [ 100% ] 018/500 VUs  39m50.9s/40m00.0s
+
+running (39m51.9s), 016/500 VUs, 131269 complete and 0 interrupted iterations
+default   [ 100% ] 016/500 VUs  39m51.9s/40m00.0s
+
+running (39m52.9s), 013/500 VUs, 131283 complete and 0 interrupted iterations
+default   [ 100% ] 013/500 VUs  39m52.9s/40m00.0s
+
+running (39m53.9s), 011/500 VUs, 131294 complete and 0 interrupted iterations
+default   [ 100% ] 011/500 VUs  39m53.9s/40m00.0s
+
+running (39m54.9s), 010/500 VUs, 131301 complete and 0 interrupted iterations
+default   [ 100% ] 010/500 VUs  39m54.9s/40m00.0s
+
+running (39m55.9s), 009/500 VUs, 131311 complete and 0 interrupted iterations
+default   [ 100% ] 009/500 VUs  39m55.9s/40m00.0s
+
+running (39m56.9s), 007/500 VUs, 131319 complete and 0 interrupted iterations
+default   [ 100% ] 007/500 VUs  39m56.9s/40m00.0s
+
+running (39m57.9s), 005/500 VUs, 131326 complete and 0 interrupted iterations
+default   [ 100% ] 005/500 VUs  39m57.9s/40m00.0s
+
+running (39m58.9s), 004/500 VUs, 131331 complete and 0 interrupted iterations
+default   [ 100% ] 004/500 VUs  39m58.9s/40m00.0s
+
+running (39m59.9s), 001/500 VUs, 131334 complete and 0 interrupted iterations
+default   [ 100% ] 001/500 VUs  39m59.9s/40m00.0s
+time="2026-03-17T19:20:35+07:00" level=info msg="\n=== SCALED LOAD TEST — TIER 500 CCU ===" source=console
+time="2026-03-17T19:20:35+07:00" level=info msg="p95 read : 3534ms  (SLO: <200ms)  ✗ BREACHED" source=console
+time="2026-03-17T19:20:35+07:00" level=info msg="p95 write: 8564ms  (SLO: <400ms)  ✗ BREACHED" source=console
+time="2026-03-17T19:20:35+07:00" level=info msg="Error rate: 0.03%  (SLO: <1%)" source=console
+time="2026-03-17T19:20:35+07:00" level=info msg="SLOs met: NO — scale up infrastructure" source=console
+{
+  "tier": 500,
+  "sloRead_ms": 200,
+  "sloWrite_ms": 400,
+  "p95Read_ms": 3534,
+  "p95Write_ms": 8564,
+  "errorRate_pct": "0.03%",
+  "casesCreated": 131211,
+  "sloMet": false
+}time="2026-03-17T19:20:35+07:00" level=error msg="failed to handle the end-of-test summary" error="Could not save some summary information:\n\t- could not open '/tests/results/scaled-500-result.json': open /tests/results/scaled-500-result.json: The system cannot find the path specified."
+
+running (40m00.0s), 000/500 VUs, 131335 complete and 0 interrupted iterations
+default ✓ [ 100% ] 000/500 VUs  40m0s
+time="2026-03-17T19:20:35+07:00" level=error msg="thresholds on metrics 'http_req_duration{operation:read}, http_req_duration{operation:write}' have been crossed"

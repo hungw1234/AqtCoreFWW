@@ -1,0 +1,12 @@
+# AqtCoreFW API — Shared Variables
+# Install "REST Client" extension in VS Code (humao.rest-client)
+# OR use JetBrains Rider built-in HTTP client
+
+@baseUrl = http://localhost:5000
+@authServerUrl = http://localhost:5001
+
+# Run _auth.http first, then paste the access_token here:
+@token = PASTE_TOKEN_HERE
+
+# Default test tenant
+@tenantId = 00000000-0000-0000-0000-000000000001

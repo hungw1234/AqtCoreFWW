@@ -1,0 +1,64 @@
+/* Print stylesheet — hides chrome, formats content for ink-efficient output */
+
+@media print {
+  /* Hide sidebar */
+  .ant-layout-sider {
+    display: none !important;
+  }
+
+  /* Hide topbar / header */
+  .ant-layout-header,
+  [role="banner"] {
+    display: none !important;
+  }
+
+  /* Make main content full-width */
+  .ant-layout,
+  .ant-layout-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Remove background colors to save ink */
+  * {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  /* Hide action buttons (Add, Edit, Delete, etc.) */
+  .ant-btn {
+    display: none !important;
+  }
+
+  /* Format tables for print */
+  .ant-table,
+  .ant-table-wrapper {
+    border: 1px solid #000 !important;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    border: 1px solid #000 !important;
+    color: #000 !important;
+  }
+
+  /* Disable table row hover highlight */
+  .ant-table-tbody > tr:hover > td {
+    background: transparent !important;
+  }
+
+  /* Page breaks between major sections */
+  .ant-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    border: 1px solid #ccc !important;
+  }
+
+  /* Ensure links are legible */
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+}

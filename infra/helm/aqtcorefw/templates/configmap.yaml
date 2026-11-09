@@ -1,0 +1,33 @@
+{{/* AqtCoreFW — Kubernetes ConfigMap for non-secret app configuration.
+     Pre-install hook (weight -10): the db-migrate hook Job (weight -5) envFroms this
+     ConfigMap, and hook pods run BEFORE the chart's regular manifests exist — a plain
+     ConfigMap arrives too late (observed "configmap not found" on the first-ever
+     install, 2026-07-23). It persists after the hook phase for the Deployment. */}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "aqtcorefw.configMapName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "aqtcorefw.labels" . | nindent 4 }}
+  annotations:
+    # pre-rollback included: without it a rollback would restart pods on the old code
+    # while this hook-owned ConfigMap kept the failed release's values (config/code skew).
+    helm.sh/hook: pre-install,pre-upgrade,pre-rollback
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: before-hook-creation
+data:
+  # Referenced by the Deployment's env (configMapKeyRef auth-authority-url) — was
+  # missing from this template until the first-ever install surfaced it (2026-07-23).
+  auth-authority-url: {{ .Values.config.authAuthorityUrl | quote }}
+  ASPNETCORE_ENVIRONMENT: {{ .Values.config.aspnetcoreEnvironment | default "Production" | quote }}
+  Logging__LogLevel__Default: {{ .Values.config.logLevelDefault | default "Information" | quote }}
+  Redis__ConnectionString: {{ .Values.config.redisConnectionString | default "" | quote }}
+  AI__Ollama__Enabled: {{ .Values.config.aiOllamaEnabled | default false | toString | quote }}
+  {{- /* Free-form non-secret env keys (double-underscore .NET config names). Reaches BOTH the
+         db-migrate hook Job (envFrom) and the Deployment — the Job builds the full DI graph
+         under --migrate-only, so environment-sensitive gates (e.g. VneId__AllowStub) must be
+         visible here, not only in the Deployment's env list. NEVER put secrets in this map. */}}
+  {{- range $k, $v := .Values.config.extra }}
+  {{ $k }}: {{ $v | quote }}
+  {{- end }}

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Silent Renew</title></head>
+<body>
+<script>
+  // OIDC silent renew callback — runs inside hidden iframe.
+  // Passes the authorization response back to the parent window
+  // where oidc-client-ts UserManager processes it.
+  (function() {
+    parent.postMessage(location.href, location.origin);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+# RabbitMQ with management UI — local-only, ephemeral. Dormant at P1 (Bus:Transport stays
+# InMemory); phase P2 flips the app to this broker for RABBITMQ-HEALTHCHECK-LIVE-BROKER-VERIFY.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: aqt-data
+  labels: { app: rabbitmq }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: rabbitmq }
+  template:
+    metadata:
+      labels: { app: rabbitmq }
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:4-management
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+          resources:
+            requests: { memory: "256Mi" }
+            limits: { memory: "768Mi" }
+          readinessProbe:
+            tcpSocket: { port: 5672 }
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: aqt-data
+spec:
+  selector: { app: rabbitmq }
+  ports:
+    - { name: amqp, port: 5672, targetPort: 5672 }
+    - { name: management, port: 15672, targetPort: 15672 }

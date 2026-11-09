@@ -1,0 +1,111 @@
+rules:
+
+  # ── Rule 1: Raw SQL string concatenation ─────────────────────────────────────
+  # Detects patterns like: "SELECT * FROM " + variable  or  $"SELECT {userInput}"
+  # Use parameterised queries (Dapper @param, EF LINQ) instead.
+  - id: no-raw-sql-string-concat
+    patterns:
+      - pattern: |
+          $SQL + $VAR
+      - metavariable-regex:
+          metavariable: $SQL
+          regex: '(?i)["''](select|insert|update|delete|exec|execute|drop|alter|create)\s'
+    message: >
+      Raw SQL string concatenation detected. Use parameterised queries (Dapper DynamicParameters
+      or EF LINQ) to prevent SQL injection. File: $PATH
+    languages: [csharp]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: CWE-89
+      owasp: A03:2021
+
+  # ── Rule 2: Interpolated SQL strings ─────────────────────────────────────────
+  - id: no-interpolated-sql
+    pattern: |
+      $DB.ExecuteSqlRaw($"...")
+    message: >
+      Interpolated string passed to ExecuteSqlRaw. Use ExecuteSqlRaw with explicit
+      parameters or FromSqlRaw with SqlParameter objects instead.
+    languages: [csharp]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: CWE-89
+
+  # ── Rule 3: Hardcoded connection strings ─────────────────────────────────────
+  - id: no-hardcoded-connection-string
+    pattern-regex: '(?i)(data\s+source|server\s*=|initial\s+catalog|password\s*=)[^"]{8,}'
+    message: >
+      Potential hardcoded connection string detected. Use IConfiguration /
+      environment variables / Azure Key Vault / Vault instead.
+    languages: [csharp]
+    severity: ERROR
+    paths:
+      exclude:
+        - "**/*.md"
+        - "**/appsettings*.json"
+        - "**/launchSettings.json"
+        - "**/testhost*"
+    metadata:
+      category: security
+      cwe: CWE-312
+
+  # ── Rule 4: Hardcoded password / secret literals ──────────────────────────────
+  - id: no-hardcoded-secrets
+    patterns:
+      - pattern: |
+          string $VAR = "...";
+      - metavariable-regex:
+          metavariable: $VAR
+          regex: '(?i)(password|passwd|secret|apikey|api_key|token|credential)'
+      - pattern-not: |
+          string $VAR = "";
+    message: >
+      Possible hardcoded secret in variable '$VAR'. Move secrets to environment
+      variables, IConfiguration, or a secrets manager.
+    languages: [csharp]
+    severity: ERROR
+    paths:
+      exclude:
+        - "**/*Tests*/**"
+        - "**/appsettings*.json"
+    metadata:
+      category: security
+      cwe: CWE-798
+
+  # ── Rule 5: IgnoreQueryFilters outside Admin namespace ───────────────────────
+  # EF IgnoreQueryFilters() bypasses tenant isolation + soft-delete global filters.
+  # Only AdminModuleDbContext (in *.Admin.* namespace) is allowed to call it.
+  - id: no-ignore-query-filters-outside-admin
+    pattern: |
+      $Q.IgnoreQueryFilters()
+    message: >
+      IgnoreQueryFilters() detected outside an Admin namespace. This bypasses tenant
+      isolation and soft-delete global filters. Move this code to a class inside
+      a *.Admin.* namespace and ensure the method accepts an explicit tenantId parameter.
+    languages: [csharp]
+    severity: ERROR
+    paths:
+      exclude:
+        - "**/*.Admin.*/**"
+        - "**/Admin/**"
+        - "**/*Admin*Tests*/**"
+    metadata:
+      category: security
+      tags:
+        - tenant-isolation
+        - multi-tenancy
+
+  # ── Rule 6: Direct DbContext.Database.ExecuteSqlRaw with user input ───────────
+  - id: no-execute-sql-raw-with-format
+    pattern: |
+      $CTX.Database.ExecuteSqlRaw(string.Format(...))
+    message: >
+      ExecuteSqlRaw with string.Format is vulnerable to SQL injection.
+      Use ExecuteSqlRaw with SqlParameter[] or ExecuteSqlInterpolated.
+    languages: [csharp]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: CWE-89

@@ -1,0 +1,72 @@
+# SQL Server 2022 — local-only, PERSISTENT (PVC): the database survives pod restart and host
+# sleep/resume. Was emptyDir, which wiped the schema on every restart; combined with the
+# ephemeral dev-mode Vault that killed the 2026-07-23 soak run, since the app cannot boot
+# against a vanished schema OR vanished encryption keys.
+#
+# Still disposable on purpose: `kubectl -n aqt-data delete pvc sqlserver-data` + reseed gives a
+# clean from-zero database. Encryption keys and DB rows must be reset TOGETHER — the keys in
+# Vault encrypt these rows (see scripts/k8s-local-generate-prod-secrets.sh rotation warning).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sqlserver-data
+  namespace: aqt-data
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: { storage: 10Gi }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqlserver
+  namespace: aqt-data
+  labels: { app: sqlserver }
+spec:
+  replicas: 1
+  # One writer only — a rolling surge would have two engines on one PVC.
+  strategy: { type: Recreate }
+  selector:
+    matchLabels: { app: sqlserver }
+  template:
+    metadata:
+      labels: { app: sqlserver }
+    spec:
+      containers:
+        - name: sqlserver
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_SA_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: aqt-data-secrets, key: sa-password }
+          resources:
+            requests: { memory: "1Gi", cpu: "250m" }
+            limits: { memory: "2.5Gi" }
+          volumeMounts:
+            - { name: data, mountPath: /var/opt/mssql }
+          # SQL Server 2022 cold-start is slow — generous startupProbe instead of a long
+          # initialDelay so the pod reports ready as soon as the engine accepts logins.
+          startupProbe:
+            tcpSocket: { port: 1433 }
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket: { port: 1433 }
+            periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: sqlserver-data }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlserver
+  namespace: aqt-data
+spec:
+  selector: { app: sqlserver }
+  ports:
+    - { port: 1433, targetPort: 1433 }

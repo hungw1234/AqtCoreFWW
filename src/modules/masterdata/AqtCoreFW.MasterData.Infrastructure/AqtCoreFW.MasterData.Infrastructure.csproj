@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.MasterData.Infrastructure</AssemblyName>
+    <RootNamespace>AqtCoreFW.MasterData.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\provinces-34-official.json" />
+    <EmbeddedResource Include="Resources\province-legacy-mapping.json" />
+    <EmbeddedResource Include="Resources\admin-units-wards-34.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="MassTransit" />
+    <ProjectReference Include="..\AqtCoreFW.MasterData.Application\AqtCoreFW.MasterData.Application.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Infrastructure\AqtCoreFW.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

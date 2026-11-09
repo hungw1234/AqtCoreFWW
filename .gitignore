@@ -1,0 +1,172 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+dist/
+bin/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# .NET build artifacts
+**/bin/
+**/obj/
+*.user
+.vs/
+
+# 1DevTool workspace (per-user task/config store, never commit)
+.1devtool/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# package manager — pnpm is the single source of truth (pnpm-lock.yaml committed)
+yarn.lock
+package-lock.json
+
+# semantic-release
+.nyc_output
+
+# local test run logs / ad-hoc reports — never commit
+vitest-output*.txt
+**/forms-multisigner-test-report-*.txt
+
+# report artifacts / office docs / rendered previews under docs/reports (binary, per-user)
+# Blanket-ignore .docx/.jpg/.png; unignore historically-tracked files below.
+docs/reports/*.docx
+docs/reports/*.jpg
+docs/reports/*.jpeg
+docs/reports/*.png
+!docs/reports/De_Xuat_Core_Fw_v1.docx
+!docs/reports/bao-cao-trien-khai-corebase.docx
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+!.env.k8s-local.example
+
+# Local appsettings overrides — developer-specific secrets, never commit
+appsettings.*.local.json
+appsettings.local.json
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# flutter
+.dart_tool
+build
+GoogleService-Info.plist
+
+repomix-output.xml
+.serena/cache
+
+# W4 cleanup: orphan stubs left on disk after git rm --cached (Bash sandbox cannot Remove-Item)
+# These files are intentionally comment-only; absent from git; harmless to build.
+src/modules/identity/AqtCoreFW.Identity.Infrastructure/Services/Signing/VnptSmartCaOptions.cs
+src/modules/identity/AqtCoreFW.Identity.Infrastructure/Services/Signing/RemoteSigningProvider.cs
+tests/integration/AqtCoreFW.Identity.Integration.Tests/Signing/RemoteSigningProviderTests.cs
+cleanup-stubs.ps1
+run-tests.cmd
+arch-out.txt
+integ-out.txt
+tests-complete.txt
+delete-marker.txt
+diff-review.txt
+plans/**/*
+!plans/templates/*
+# In-flight plans that must travel between dev machines (Windows <-> macOS) are
+# re-included explicitly; remove the pair when the plan is archived.
+!plans/260923-1123-macos-dual-machine-dev/
+!plans/260923-1123-macos-dual-machine-dev/*
+screenshots/*
+docs/screenshots/*
+logs.txt
+# API runtime logs — Serilog rolling files under host project
+src/host/*/logs/
+# Any other runtime/debug log at any depth
+*.log
+# Local scratch directory at repo root
+/tmp/
+test-ck
+__pycache__
+
+# CK meta commands
+prompt.md
+ck.md
+
+# .NET CLI home written into the repo when a tool runs with DOTNET_CLI_HOME/HOME at repo
+# root: first-use sentinels + toolResolverCache with machine-absolute paths (C:\NuGetPackages).
+.dotnet/
+# Background service logs + generated launch scripts from scripts/1_run-local-dev.ps1 (macOS/Linux)
+.logs/
+
+# Claude Code / ClaudeKit — user-level config, not repo-level
+.claude/
+.opencode/
+
+# Gemini CLI settings
+.gemini/settings.json
+# External repos for study/reference
+external/
+
+# Git worktrees (local development only)
+worktrees/
+
+# Frontend (web/) build artifacts
+web/node_modules/
+web/dist/
+web/.vite/
+web/coverage/
+
+# Test artifacts — xUnit .trx files from test runs
+tests/**/TestResults/
+src/tests/**/TestResults/
+
+# Dev data reset logs (scripts/reset-all.ps1)
+.reset-logs/
+
+# Local EF Core tooling (manifest quirk workaround — never commit)
+.eftools/
+
+# Signing provider credentials + soft-tokens — NEVER commit (secrets in working tree)
+other/remote_signing_viettel/config_viettel_ca.txt
+other/vgca_usb_token/*.p12
+other/vgca_usb_token/pass_*.txt
+# VGCA desktop-tool installers — large vendor binaries (~109MB), reference-only, never in history
+other/vgca_usb_token/tool/
+
+# Signing dev trust certs (extracted from live CertInfo — may contain PII leaf; re-extract via runbook)
+other/signing-dev-roots/
+
+# Alert rules rendered out of the Helm chart to run promtool against — a build artifact.
+# Regenerate with the command documented in infra/prometheus/alert-rules-test.yml.
+infra/prometheus/alert-rules.yml
+infra/k8s-local/soak-log.csv
+
+# Local BA kit workspace (g1-ba-kit init) - symlinks point to a per-machine kit path
+/bakit/

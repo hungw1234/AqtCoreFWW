@@ -1,0 +1,103 @@
+# AqtCoreFW AuthServer — PRODUCTION overlay TEMPLATE.
+#
+# ⚠️ THIS IS A TEMPLATE, NOT A DEPLOYABLE FILE. Every `<<REPLACE-...>>` below MUST be
+#    substituted with the real production value before `helm upgrade`. Helm renders the
+#    placeholders literally, so an unreplaced value fails LOUD at pod boot (opaque URI /
+#    image-pull error) — deliberate: there is no plausible-looking default to deploy by mistake.
+#
+# Closes the code-shaped portion of backlog row AUTHSERVER-PROD-VALUES-SPA-REDIRECT-URIS.
+# The real origins/registry/cert custody are supplied when a production cluster exists.
+# Mirrors values-local.yaml structure; prod deltas: real HTTPS (no Auth__AllowHttp), real TLS,
+# real registry, prod cert custody (see AUTHSERVER-PROD-CERT-PROVISIONING-RUNBOOK).
+
+replicaCount: 2   # low-traffic (token + login), but ≥2 for rolling upgrade availability
+
+image:
+  repository: "<<REPLACE-REGISTRY>>/aqtcorefw/authserver"   # e.g. registry.example.com/aqtcorefw/authserver
+  tag: "<<REPLACE-IMAGE-TAG>>"                               # pin an immutable tag/digest, NOT latest
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - name: "<<REPLACE-REGISTRY-PULL-SECRET>>"
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"   # prod = HTTPS only
+  hosts:
+    - host: "<<REPLACE-AUTH-HOST>>"     # e.g. auth.aqtcore.example.com — MUST match config.issuerUri host
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: "<<REPLACE-AUTH-TLS-SECRET>>"
+      hosts:
+        - "<<REPLACE-AUTH-HOST>>"
+
+# env is a full replace (deployment.yaml: `toYaml .Values.env`) — the WHOLE list is repeated here.
+# Prod differs from values-local.yaml by: Auth__AllowHttp OMITTED (HTTPS enforced), HTTPS SPA/issuer origins.
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Production
+  - name: Urls
+    value: "http://+:5000"   # TLS terminates at ingress; pod stays plain HTTP behind it
+  - name: ConnectionStrings__Default
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: db-connection-string
+  - name: Auth__IssuerUri
+    valueFrom:
+      configMapKeyRef:
+        name: aqtcorefw-auth-config
+        key: issuer-uri
+  # OpenIddict signing/encryption certs. Custody = Vault PKI (decided 2026-07-30) — see
+  # docs/ops/authserver-prod-cert-provisioning-runbook.md. The app reads a PFX FILE from these
+  # paths (Program.cs LoadRequiredCertificate is file-only); the runbook's recommended Option A
+  # uses a Vault-authed init-container to fetch the PKI-issued PEM and pack it into the PFX at
+  # /certs (a Memory emptyDir), so these Path values stay as-is. The extraVolumes Secret + the
+  # <<REPLACE-OPENIDDICT-CERT-SECRET>> refs below are the INTERIM file-Secret shape — replace with
+  # the init-container + emptyDir wiring when a real Vault PKI cluster exists (still gated on that).
+  # The PFX password still comes via Vault-config regardless of Option A/B.
+  - name: Auth__SigningCertificate__Path
+    value: "/certs/signing.pfx"
+  - name: Auth__EncryptionCertificate__Path
+    value: "/certs/encryption.pfx"
+  - name: Auth__SigningCertificate__Password
+    valueFrom:
+      secretKeyRef:
+        name: "<<REPLACE-OPENIDDICT-CERT-SECRET>>"   # prod cert custody, NOT the local self-signed Secret
+        key: pfx-password
+  - name: Auth__EncryptionCertificate__Password
+    valueFrom:
+      secretKeyRef:
+        name: "<<REPLACE-OPENIDDICT-CERT-SECRET>>"
+        key: pfx-password
+  # OIDC SPA client callbacks. REQUIRED outside Development — seeder throws at startup without them.
+  # <<REPLACE-SPA-ORIGIN>> = the SPA's public origin WITHOUT trailing slash, e.g. app.aqtcore.example.com.
+  # Each origin needs BOTH /callback and /silent-renew.html (oidc-client-ts silent-renew iframe).
+  - name: Auth__SpaClient__RedirectUris__0
+    value: "https://<<REPLACE-SPA-ORIGIN>>/callback"
+  - name: Auth__SpaClient__RedirectUris__1
+    value: "https://<<REPLACE-SPA-ORIGIN>>/silent-renew.html"
+  # ORDER IS LOAD-BEARING: slashless FIRST, trailing-slash SECOND. new Uri("https://h") equals
+  # new Uri("https://h/"), so the seeder's ISet<Uri> keeps only the first spelling; OpenIddict
+  # stores its OriginalString and matches logout by ordinal compare against the SPA's
+  # window.location.origin (always slashless). Reverse these two and every logout returns 400.
+  - name: Auth__SpaClient__PostLogoutRedirectUris__0
+    value: "https://<<REPLACE-SPA-ORIGIN>>"
+  - name: Auth__SpaClient__PostLogoutRedirectUris__1
+    value: "https://<<REPLACE-SPA-ORIGIN>>/"
+
+extraVolumes:
+  - name: openiddict-certs
+    secret:
+      secretName: "<<REPLACE-OPENIDDICT-CERT-SECRET>>"
+extraVolumeMounts:
+  - name: openiddict-certs
+    mountPath: /certs
+    readOnly: true
+
+config:
+  # MUST equal the ingress host above, https scheme, no trailing slash — clients pin the issuer.
+  issuerUri: "https://<<REPLACE-AUTH-HOST>>"

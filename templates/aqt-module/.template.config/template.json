@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "AEQUITAS",
+  "classifications": ["AqtCoreFW", "Module", "DDD"],
+  "identity": "AqtCoreFW.Module",
+  "name": "AqtCoreFW Module (4-layer DDD)",
+  "shortName": "aqt-module",
+  "description": "Scaffolds a new AqtCoreFW module with Domain, Application, Infrastructure, and Presentation layers following the golden-path architecture.",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "ModuleName",
+  "preferNameDirectory": true,
+  "symbols": {
+    "name": {
+      "type": "parameter",
+      "datatype": "text",
+      "description": "The name of the module (PascalCase, e.g., Permits)",
+      "replaces": "ModuleName",
+      "fileRename": "ModuleName",
+      "isRequired": true
+    },
+    "moduleNameLower": {
+      "type": "derived",
+      "valueSource": "name",
+      "valueTransform": "lowerCase",
+      "replaces": "modulename"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": ["**/bin/**", "**/obj/**"]
+        }
+      ]
+    }
+  ]
+}

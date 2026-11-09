@@ -1,0 +1,167 @@
+### ==== SYSTEM PARAMS API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base routes:
+#   /api/v1/admin/system-params      — system parameter CRUD (Admin)
+#   /api/v1/admin/feature-flags      — feature flag management (Admin)
+#   /api/v1/feature-flags/{key}      — feature flag read (AllowAnonymous)
+#   /api/v1/admin/announcements      — announcement CRUD (Admin)
+#   /api/v1/announcements/active     — active announcements read (AllowAnonymous)
+#
+# Feature flag keys use "feature:" prefix — e.g. "feature:ai-chat"
+# Severity enum: Info, Warning, Critical
+
+# ── System Parameters ────────────────────────────────────────────────────────
+
+### List all system parameters (global + tenant-scoped)
+GET {{baseUrl}}/api/v1/admin/system-params
+Authorization: Bearer {{token}}
+
+###
+
+### List system parameters for a specific tenant
+GET {{baseUrl}}/api/v1/admin/system-params?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Get single parameter by key
+GET {{baseUrl}}/api/v1/admin/system-params/max_case_attachments_mb
+Authorization: Bearer {{token}}
+
+###
+
+### Get tenant-scoped parameter
+GET {{baseUrl}}/api/v1/admin/system-params/max_case_attachments_mb?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Update parameter value (must be IsEditable = true)
+PUT {{baseUrl}}/api/v1/admin/system-params/max_case_attachments_mb
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "value": "50"
+}
+
+###
+
+### Update tenant-scoped parameter
+PUT {{baseUrl}}/api/v1/admin/system-params/max_case_attachments_mb?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "value": "100"
+}
+
+# ── Feature Flags ────────────────────────────────────────────────────────────
+
+###
+
+### List all feature flags (Admin — includes disabled flags)
+GET {{baseUrl}}/api/v1/admin/feature-flags
+Authorization: Bearer {{token}}
+
+###
+
+### Toggle feature flag on/off (Admin)
+# flagName: short name without "feature:" prefix (e.g. "ai-chat", "rtbf-portal")
+PUT {{baseUrl}}/api/v1/admin/feature-flags/ai-chat
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "isEnabled": true
+}
+
+###
+
+### Toggle feature flag for a specific tenant
+PUT {{baseUrl}}/api/v1/admin/feature-flags/ai-chat?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "isEnabled": false
+}
+
+###
+
+### Check if a feature flag is enabled (public — no auth, from L0 ConcurrentDict)
+GET {{baseUrl}}/api/v1/feature-flags/ai-chat
+
+###
+
+### Check feature flag with full "feature:" prefix
+GET {{baseUrl}}/api/v1/feature-flags/feature:ai-chat
+
+# ── Announcements ────────────────────────────────────────────────────────────
+
+###
+
+### List all announcements including inactive (Admin)
+GET {{baseUrl}}/api/v1/admin/announcements
+Authorization: Bearer {{token}}
+
+###
+
+### Create system announcement (Admin)
+# Severity enum: Info, Warning, Critical
+# TargetRoles: comma-separated role names, null = all users
+POST {{baseUrl}}/api/v1/admin/announcements
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Scheduled maintenance",
+  "content": "The system will be unavailable on 2026-03-15 from 02:00 to 04:00 UTC for scheduled maintenance.",
+  "severity": "Warning",
+  "startAt": "2026-03-14T18:00:00Z",
+  "endAt": "2026-03-15T04:00:00Z",
+  "targetRoles": null
+}
+
+###
+
+### Create announcement targeted to specific roles
+POST {{baseUrl}}/api/v1/admin/announcements
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "New feature: AI Chat",
+  "content": "AI-powered case query is now available. See training materials in the Help section.",
+  "severity": "Info",
+  "startAt": null,
+  "endAt": null,
+  "targetRoles": "Admin,GovOfficer"
+}
+
+###
+
+### Update announcement (Admin)
+PUT {{baseUrl}}/api/v1/admin/announcements/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Scheduled maintenance — UPDATED",
+  "content": "Maintenance window extended to 06:00 UTC.",
+  "severity": "Critical",
+  "startAt": "2026-03-14T18:00:00Z",
+  "endAt": "2026-03-15T06:00:00Z",
+  "isActive": true
+}
+
+###
+
+### Deactivate announcement (soft-delete via Admin endpoint)
+DELETE {{baseUrl}}/api/v1/admin/announcements/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+
+###
+
+### Get active announcements (public — no auth, cached 1min)
+GET {{baseUrl}}/api/v1/announcements/active

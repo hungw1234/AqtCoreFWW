@@ -1,0 +1,303 @@
+/* === Design Tokens (CSS Custom Properties) — Nyasha-inspired === */
+:root {
+  /* --- Color Palette --- */
+  --gov-navy: #007BFF;
+  --gov-navy-deep: #0056B3;
+  --gov-navy-light: #3395FF;
+  --gov-action-blue: #007BFF;
+  --gov-bg-layout: #F7F7F9;
+  --gov-bg-card: #FFFFFF;
+  --gov-bg-muted: #F1F3F5;
+  --gov-text-primary: #212529;
+  --gov-text-secondary: #6C757D;
+  --gov-text-muted: #ADB5BD;
+  --gov-border-color: #E9ECEF;
+  --gov-gold: #007BFF;
+  --gov-gold-text: #0056B3;
+
+  /* --- Semantic Status --- */
+  --status-success: #28A745;
+  --status-warning: #FFC107;
+  --status-error: #DC3545;
+  --status-info: #007BFF;
+
+  /* --- Layout Dimensions --- */
+  --header-height: 60px;
+  --sider-width: 220px;
+  --sider-collapsed-width: 72px;
+  --content-padding: 24px;
+  --content-padding-h: 24px;
+  --content-max-width: 1440px;
+  --page-gap: 24px;
+
+  /* --- Border Radius Scale --- */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* --- Spacing scale (4px base) --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* --- Elevation Shadows (flatter, Nyasha-style) --- */
+  --elevation-1: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --elevation-2: 0 2px 6px rgba(0, 0, 0, 0.08);
+  --elevation-3: 0 4px 12px rgba(0, 0, 0, 0.10);
+  --elevation-hover: 0 4px 10px rgba(0, 0, 0, 0.10);
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* --- Typography --- */
+  --font-body: 'Inter', 'Noto Sans', 'Segoe UI', sans-serif;
+  --font-heading: 'Be Vietnam Pro', 'Inter', 'Noto Sans', sans-serif;
+
+  /* --- Sidebar --- */
+  --sidebar-bg: #FFFFFF;
+  --sidebar-active-accent: #007BFF;
+  --sidebar-border: 1px solid #E9ECEF;
+}
+
+/* === Dark Mode Overrides === */
+[data-theme="dark"] {
+  --gov-navy-deep: #0D1B2A;
+  --gov-bg-layout: #0D1B2A;
+  --gov-bg-card: #142234;
+  --gov-bg-elevated: #1C2F44;
+  --gov-bg-muted: #111D2E;
+  --gov-text-primary: #F1F5F9;
+  --gov-text-secondary: #94A3B8;
+  --gov-text-muted: #64748B;
+  --gov-border-color: #1E3A55;
+  --gov-action-blue: #3B82F6;
+
+  --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.24);
+  --elevation-2: 0 4px 12px rgba(0, 0, 0, 0.32);
+  --elevation-3: 0 8px 24px rgba(0, 0, 0, 0.40);
+  --elevation-hover: 0 6px 16px rgba(0, 0, 0, 0.36);
+
+  --sidebar-bg: #0D1B2A;
+  --sidebar-border: 1px solid #1E3A55;
+}
+
+/* Dark mode: cards use distinct surface color */
+[data-theme="dark"] .ant-card {
+  background: var(--gov-bg-card);
+}
+[data-theme="dark"] .ant-modal-content,
+[data-theme="dark"] .ant-dropdown-menu,
+[data-theme="dark"] .ant-popover-inner {
+  background: var(--gov-bg-elevated);
+}
+
+/* Light mode: subtle border on cards */
+[data-theme="light"] .ant-card {
+  border: 1px solid var(--gov-border-color);
+}
+
+/* === Heading Font === */
+h1, h2, h3, h4,
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4 {
+  font-family: var(--font-heading) !important;
+  font-weight: 600;
+}
+
+/* === Card Hover — subtle lift === */
+.gov-card-hover {
+  transition: transform var(--transition-normal),
+              box-shadow var(--transition-normal);
+  border-radius: var(--radius-lg);
+}
+.gov-card-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--elevation-hover);
+}
+
+/* === Smooth scrollbar for sidebar === */
+.gov-sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.gov-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+}
+[data-theme="dark"] .gov-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* === Focus ring for keyboard navigation (WCAG 2.4.7) === */
+:focus-visible {
+  outline: 2px solid var(--gov-action-blue);
+  outline-offset: 2px;
+}
+
+/* === Topbar breadcrumb — uses CSS vars for theme-aware colors === */
+.ant-layout-header .ant-breadcrumb li:not(:last-child) .ant-breadcrumb-link {
+  color: var(--gov-text-secondary);
+}
+.ant-layout-header .ant-breadcrumb li:last-child {
+  color: var(--gov-text-primary);
+}
+
+/* === Menu selected item — rounded with blue accent === */
+.ant-menu-light .ant-menu-item-selected,
+.ant-menu .ant-menu-item-selected {
+  border-radius: 6px !important;
+}
+/* Dark mode sidebar menu styling */
+[data-theme="dark"] .ant-menu-dark .ant-menu-item-selected {
+  border-radius: 6px !important;
+}
+
+/* === Table Enhancements === */
+.ant-table-tbody > tr {
+  transition: background var(--transition-fast);
+}
+.ant-table-tbody > tr:nth-child(even) > td {
+  background: rgba(0, 0, 0, 0.018);
+}
+[data-theme="dark"] .ant-table-tbody > tr:nth-child(even) > td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Table inside card — rounded corners flush with card */
+.ant-card .ant-table-wrapper {
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+
+/* Better table header styling — bold dark text for readability */
+.ant-table-thead > tr > th {
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--gov-text-primary) !important;
+}
+
+/* Toolbar controls — prominent search & filters */
+.admin-table-toolbar .ant-input-affix-wrapper,
+.admin-table-toolbar .ant-select-selector {
+  border-color: var(--gov-border-color) !important;
+  background: var(--gov-bg-card) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.admin-table-toolbar .ant-input-affix-wrapper:hover,
+.admin-table-toolbar .ant-select-selector:hover {
+  border-color: var(--gov-navy) !important;
+}
+.admin-table-toolbar .ant-input-affix-wrapper .ant-input::placeholder {
+  color: var(--gov-text-secondary);
+  font-weight: 400;
+}
+.admin-table-toolbar .ant-select-selection-placeholder {
+  color: var(--gov-text-secondary) !important;
+  font-weight: 400;
+}
+
+/* Softer tag styling — pill shape with tinted backgrounds */
+.ant-tag {
+  border-radius: 12px !important;
+  border: none !important;
+  font-weight: 500;
+  font-size: 12px;
+  padding: 1px 10px !important;
+  line-height: 20px;
+}
+
+/* Better pagination inside card */
+.ant-card .ant-table-pagination {
+  padding: 12px 24px !important;
+  margin: 0 !important;
+  border-top: 1px solid var(--gov-border-color);
+}
+[data-theme="dark"] .ant-card .ant-table-pagination {
+  border-top-color: var(--gov-border-color);
+}
+
+/* Action button group styling — consistent small buttons */
+.ant-table-tbody .ant-btn-sm {
+  border-radius: 6px;
+}
+
+/* Table toolbar divider */
+.admin-table-toolbar {
+  border-bottom: 1px solid var(--gov-border-color);
+}
+[data-theme="dark"] .admin-table-toolbar {
+  border-bottom-color: var(--gov-border-color);
+}
+
+/* === Content container for max-width centering === */
+.admin-content-container {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--content-padding) var(--content-padding-h);
+}
+
+/* === Route transition === */
+.gov-page-enter {
+  animation: govFadeIn var(--transition-normal) ease-out;
+}
+@keyframes govFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === Responsive visibility utilities === */
+@media (max-width: 767px) {
+  .hide-on-mobile { display: none !important; }
+  .admin-table-toolbar .ant-input-affix-wrapper { width: 100% !important; }
+  .ant-btn-sm { min-height: 36px; min-width: 36px; }
+  .ant-table-tbody > tr > td { padding: 12px 8px; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hide-on-tablet { display: none !important; }
+}
+
+/* === Mobile drawer — theme-aware background === */
+.mobile-nav-drawer .ant-drawer-body {
+  padding: 0;
+  background: var(--sidebar-bg);
+}
+.mobile-nav-drawer .ant-drawer-header {
+  background: var(--sidebar-bg);
+  border-bottom: var(--sidebar-border);
+}
+.mobile-nav-drawer .ant-drawer-header-title {
+  flex-direction: row-reverse;
+  padding: 0;
+}
+.mobile-nav-drawer .ant-drawer-close {
+  color: var(--gov-text-secondary);
+  margin: 0;
+  padding: 0 16px;
+}
+.mobile-nav-drawer .ant-drawer-close:hover {
+  color: var(--gov-text-primary);
+  background: rgba(0, 0, 0, 0.04);
+}
+[data-theme="dark"] .mobile-nav-drawer .ant-drawer-close {
+  color: rgba(255, 255, 255, 0.6);
+}
+[data-theme="dark"] .mobile-nav-drawer .ant-drawer-close:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* === Sidebar badge visibility === */
+.ant-menu-dark .ant-badge .ant-badge-count {
+  box-shadow: none;
+}

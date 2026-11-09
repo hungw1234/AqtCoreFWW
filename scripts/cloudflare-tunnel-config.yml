@@ -1,0 +1,32 @@
+# Cloudflare Tunnel config — expose all 3 AqtCoreFW services
+#
+# Setup (one-time):
+#   1. cloudflared tunnel login
+#   2. cloudflared tunnel create aqtcorefw-demo
+#   3. Add DNS records in Cloudflare dashboard:
+#      - demo.yourdomain.com    → tunnel UUID
+#      - api.yourdomain.com     → tunnel UUID
+#      - auth.yourdomain.com    → tunnel UUID
+#   4. cloudflared tunnel --config scripts/cloudflare-tunnel-config.yml run aqtcorefw-demo
+#
+# Quick tunnel (no setup, random URL, single service only):
+#   cloudflared tunnel --url http://localhost:5173
+
+tunnel: aqtcorefw-demo
+credentials-file: ~/.cloudflared/<TUNNEL_UUID>.json
+
+ingress:
+  # Frontend (React 19)
+  - hostname: demo.yourdomain.com
+    service: http://localhost:5173
+
+  # API (.NET 10)
+  - hostname: api.yourdomain.com
+    service: http://localhost:5001
+
+  # Auth Server (OpenIddict OIDC)
+  - hostname: auth.yourdomain.com
+    service: http://localhost:5002
+
+  # Catch-all (required by cloudflared)
+  - service: http_status:404

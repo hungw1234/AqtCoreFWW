@@ -1,0 +1,10 @@
+{
+  "tier": 500,
+  "sloRead_ms": 200,
+  "sloWrite_ms": 400,
+  "p95Read_ms": 1107,
+  "p95Write_ms": 18680,
+  "errorRate_pct": "0.00%",
+  "casesCreated": 70203,
+  "sloMet": false
+}

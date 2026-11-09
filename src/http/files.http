@@ -1,0 +1,69 @@
+### ==== FILES API ====
+# Docs: http://localhost:5000/scalar/v1
+# Base route: /api/v1/files
+#
+# Upload lifecycle:
+#   POST /api/v1/files → 202 Accepted (quarantined, ClamAV scan queued async)
+#   GET  /api/v1/files/{id}/metadata → poll scan status (Quarantined → Available/Rejected)
+#   GET  /api/v1/files/{id}          → download (Available files only)
+#   DELETE /api/v1/files/{id}        → soft delete
+#
+# Max upload size: 100 MB
+# Classification enum: Public, Internal, Confidential, Secret
+
+# ── Upload ───────────────────────────────────────────────────────────────────
+
+### Upload file (multipart/form-data)
+# VS Code REST Client: use < syntax to attach a local file
+# Replace ./sample.pdf with actual file path
+# Required query params: tenantId, uploadedBy
+# Optional: caseId (links file to a case), classification (default: Internal)
+POST {{baseUrl}}/api/v1/files?tenantId={{tenantId}}&uploadedBy=00000000-0000-0000-0000-000000000001&classification=Internal
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="file"; filename="sample.pdf"
+Content-Type: application/pdf
+
+< ./sample.pdf
+------Boundary--
+
+###
+
+### Upload file linked to a case
+POST {{baseUrl}}/api/v1/files?tenantId={{tenantId}}&uploadedBy=00000000-0000-0000-0000-000000000001&caseId=00000000-0000-0000-0000-000000000001&classification=Confidential
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="file"; filename="evidence.pdf"
+Content-Type: application/pdf
+
+< ./evidence.pdf
+------Boundary--
+
+# ── Metadata & Polling ───────────────────────────────────────────────────────
+
+###
+
+### Get file metadata + virus scan status (poll after upload until status = Available)
+GET {{baseUrl}}/api/v1/files/00000000-0000-0000-0000-000000000001/metadata?tenantId={{tenantId}}
+Authorization: Bearer {{token}}
+
+# ── Download ─────────────────────────────────────────────────────────────────
+
+###
+
+### Download file (streaming, range-processing enabled)
+# Returns 403 if file status is not Available (scan not passed yet)
+GET {{baseUrl}}/api/v1/files/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}&requestedBy=00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+
+# ── Delete ───────────────────────────────────────────────────────────────────
+
+###
+
+### Soft-delete a file record
+DELETE {{baseUrl}}/api/v1/files/00000000-0000-0000-0000-000000000001?tenantId={{tenantId}}&deletedBy=00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}

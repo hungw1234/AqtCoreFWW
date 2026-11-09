@@ -1,0 +1,10 @@
+# Local kind-cluster namespaces. `aqt-monitoring` is created by plan phase P3, not here.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aqt-data
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aqt-app

@@ -1,0 +1,40 @@
+@model AqtCoreFW.AuthServer.Controllers.VerifyMfaViewModel
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Xác thực hai yếu tố — AqtCoreFW</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1); width: 360px; }
+        h1 { font-size: 1.25rem; margin: 0 0 .5rem; text-align: center; color: #1a1a2e; }
+        .hint { font-size: .8rem; color: #666; text-align: center; margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: .25rem; font-size: .875rem; color: #333; }
+        input[type=text] { width: 100%; padding: .5rem; margin-bottom: 1rem; border: 1px solid #d9d9d9; border-radius: 4px; box-sizing: border-box; font-size: 1.25rem; text-align: center; letter-spacing: .5rem; }
+        button { width: 100%; padding: .625rem; background: #1677ff; color: #fff; border: none; border-radius: 4px; font-size: .875rem; cursor: pointer; }
+        button:hover { background: #0958d9; }
+        .error { color: #ff4d4f; font-size: .8rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Xác thực hai yếu tố</h1>
+        <p class="hint">Nhập mã từ ứng dụng xác thực (Authenticator App)</p>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="error">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@error.ErrorMessage</div>
+                }
+            </div>
+        }
+        <form method="post" action="/account/verify-mfa">
+            <label for="code">Mã xác thực</label>
+            <input type="text" id="code" name="Code" maxlength="6" pattern="[0-9]{6}" required autofocus autocomplete="one-time-code" />
+            <button type="submit">Xác nhận</button>
+        </form>
+    </div>
+</body>
+</html>

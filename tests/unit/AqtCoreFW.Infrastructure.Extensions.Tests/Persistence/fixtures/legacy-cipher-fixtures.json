@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-10T00:58:36.9594121\u002B00:00",
+  "test_key_base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+  "note": "Captured from EncryptedStringConverter BEFORE v{N}: prefix addition. Used by Read_LegacyNoPrefix_DecryptsAsV1 test. DO NOT REGENERATE after converter change.",
+  "fixtures": [
+    {
+      "plaintext": "JBSWY3DPEHPK3PXP",
+      "cipher": "3clLFYToLCk9NgiTzpKTb2T6\u002BBpgE\u002Bbzoa1xiyibcudc9mI4nUSzPi\u002Bjpx8="
+    },
+    {
+      "plaintext": "Nguy\u1EC5n V\u0103n A",
+      "cipher": "otw5su3/hCu/PjNG\u002BX4QaxTd1\u002BFs6kJU96Q4pNYjWVQiU8scbZ56tGSZhw=="
+    },
+    {
+      "plaintext": "",
+      "cipher": ""
+    },
+    {
+      "plaintext": "Multi-line\nstring with\ttabs and \uD83D\uDD10 emoji",
+      "cipher": "lASAnwM41nMFlkBV5u76ORQngwqhuffjhkVQOvPpBNlZRoIaEWr9iBjjvnl2wccqPtsdVdBO2DqFiHIZNBeDQ8B6LEP4Aw=="
+    }
+  ]
+}

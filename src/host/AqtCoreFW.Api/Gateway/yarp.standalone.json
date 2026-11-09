@@ -1,0 +1,86 @@
+{
+  "_comment": "Mode B (standalone): used when Gateway:Mode=Standalone. Deploy as separate aqt-gateway service. Update Destinations.Address to actual backend service URLs when extracting microservices.",
+  "ReverseProxy": {
+    "Routes": {
+      "api-route": {
+        "ClusterId": "api",
+        "Match": { "Path": "/api/{**catch-all}" },
+        "Transforms": [
+          { "RequestHeader": "X-Forwarded-For", "Append": "{RemoteIpAddress}" },
+          { "RequestHeader": "X-Forwarded-Host", "Append": "{Host}" }
+        ],
+        "RateLimiterPolicy": "default"
+      },
+      "hub-route": {
+        "ClusterId": "api-signalr",
+        "Match": { "Path": "/hub/{**catch-all}" },
+        "Transforms": [
+          { "RequestHeader": "X-Forwarded-For", "Append": "{RemoteIpAddress}" }
+        ]
+      },
+      "ai-route": {
+        "ClusterId": "api",
+        "Match": { "Path": "/api/{v}/ai/{**catch-all}" },
+        "Timeout": "00:05:00",
+        "Transforms": [
+          { "ResponseHeader": "X-Accel-Buffering", "Set": "no" }
+        ]
+      },
+      "export-route": {
+        "ClusterId": "api",
+        "Match": { "Path": "/api/{v}/export/{**catch-all}" },
+        "Timeout": "00:05:00",
+        "Transforms": [
+          { "ResponseHeader": "X-Accel-Buffering", "Set": "no" }
+        ]
+      }
+    },
+    "Clusters": {
+      "api": {
+        "LoadBalancingPolicy": "PowerOfTwoChoices",
+        "HttpRequest": {
+          "Version": "2",
+          "VersionPolicy": "RequestVersionOrHigher"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:05",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health"
+          },
+          "Passive": {
+            "Enabled": true,
+            "Policy": "TransportFailureRate",
+            "ReactivationPeriod": "00:00:10"
+          }
+        },
+        "Destinations": {
+          "api/destination1": {
+            "Address": "http://aqt-api:5001"
+          }
+        }
+      },
+      "api-signalr": {
+        "SessionAffinity": {
+          "Enabled": true,
+          "Policy": "Cookie",
+          "AffinityKeyName": ".aqt-affinity"
+        },
+        "HealthCheck": {
+          "Passive": {
+            "Enabled": true,
+            "Policy": "TransportFailureRate",
+            "ReactivationPeriod": "00:00:10"
+          }
+        },
+        "Destinations": {
+          "api-signalr/destination1": {
+            "Address": "http://aqt-api:5001"
+          }
+        }
+      }
+    }
+  }
+}

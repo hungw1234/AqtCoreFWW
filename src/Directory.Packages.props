@@ -1,0 +1,109 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="AspNetCore.HealthChecks.Rabbitmq" Version="9.0.0" />
+    <PackageVersion Include="HtmlSanitizer" Version="9.1.973" />
+    <PackageVersion Include="MediatR" Version="12.5.0" />
+    <PackageVersion Include="FluentValidation" Version="11.11.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageVersion Include="FluentResults" Version="3.16.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3" />
+    <PackageVersion Include="Dapper" Version="2.1.66" />
+    <PackageVersion Include="Bogus" Version="35.6.1" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.5" />
+    <!-- NCalc CVE bump (GHSA-3w5p-95mh-gq75 moderate-severity factorial-operand DoS); pulls patched NCalc.Core transitively -->
+    <PackageVersion Include="NCalcSync" Version="6.1.1" />
+    <PackageVersion Include="RulesEngine" Version="6.0.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.0" />
+    <!-- OpenTelemetry CVE bump (GHSA-g94r-2vxg-569j moderate-severity propagation header DoS) -->
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.15.1-beta.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
+    <!-- Exposes System.Diagnostics.Metrics meters on a scrape endpoint. Without it those meters reach
+         the OTLP collector only, so nothing that queries Prometheus can read a module counter.
+         This package has never shipped a stable version; the -beta matching the pinned 1.15.3 line above
+         is preferred over the newer 1.16/1.17 betas to keep the OpenTelemetry versions consistent. -->
+    <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.15.3-beta.1" />
+    <PackageVersion Include="prometheus-net.AspNetCore" Version="8.2.1" />
+    <PackageVersion Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.FeatureManagement.AspNetCore" Version="4.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="9.7.1" />
+    <PackageVersion Include="Microsoft.Extensions.AI.Ollama" Version="9.7.0-preview.1.25356.2" />
+    <PackageVersion Include="Azure.AI.OpenAI" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.Extensions.AI.OpenAI" Version="10.4.1" />
+    <PackageVersion Include="Polly" Version="8.6.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.3.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+    <!-- Pin transitive Microsoft.OpenApi (via AspNetCore.OpenApi) above the high-severity floor (GHSA-v5pm-xwqc-g5wc, first patched 2.7.5); stays on v2 branch AspNetCore.OpenApi 10 builds against -->
+    <PackageVersion Include="Microsoft.OpenApi" Version="2.9.0" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.5.1" />
+    <PackageVersion Include="StackExchange.Redis" Version="2.8.41" />
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="10.0.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.0" />
+    <PackageVersion Include="FluentAssertions" Version="8.2.0" />
+    <PackageVersion Include="NSubstitute" Version="5.3.0" />
+    <PackageVersion Include="Hangfire.Core" Version="1.8.17" />
+    <PackageVersion Include="Hangfire.SqlServer" Version="1.8.17" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.17" />
+    <PackageVersion Include="MassTransit" Version="8.3.6" />
+    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.3.6" />
+    <PackageVersion Include="MassTransit.EntityFrameworkCore" Version="8.3.6" />
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
+    <PackageVersion Include="Asp.Versioning.Mvc" Version="8.1.0" />
+    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageVersion Include="OpenIddict.AspNetCore" Version="7.4.0" />
+    <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.4.0" />
+    <PackageVersion Include="OpenIddict.Validation.SystemNetHttp" Version="7.4.0" />
+    <PackageVersion Include="Otp.NET" Version="1.4.1" />
+    <PackageVersion Include="QRCoder" Version="1.6.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
+    <PackageVersion Include="Minio" Version="6.0.4" />
+    <PackageVersion Include="nClam" Version="6.0.0" />
+    <PackageVersion Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
+    <PackageVersion Include="MailKit" Version="4.16.0" />
+    <!-- Scriban 7.2.5: clears moderate template-parse advisories (GHSA-q6rr-fm2g-g5x8, GHSA-6q7j-xr26-3h2c, both first patched 7.2.1) -->
+    <PackageVersion Include="Scriban" Version="7.2.5" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="10.0.0" />
+    <!-- Pin transitive MessagePack (via SignalR) above the LZ4-decompression DoS floor (GHSA-hv8m-jj95-wg3x) and the nested-array buffer-limit advisory (GHSA-qhrr-8q5h-9q3h, first patched 2.5.303); stays on v2 branch SignalR builds against -->
+    <PackageVersion Include="MessagePack" Version="2.5.303" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
+    <PackageVersion Include="ClosedXML" Version="0.104.2" />
+    <PackageVersion Include="QuestPDF" Version="2025.4.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0" />
+    <PackageVersion Include="Testcontainers.MsSql" Version="4.4.0" />
+    <PackageVersion Include="Testcontainers.Redis" Version="4.4.0" />
+    <PackageVersion Include="VaultSharp" Version="1.17.5.1" />
+    <!-- Override transitive Newtonsoft.Json 11.0.1 (GHSA-5crp-9r3c-p9vr) -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <!-- Override transitive SSH.NET 2024.2.0 pulled by Testcontainers 4.4.0 (GHSA-mggc-4xg6-vcxf, GHSA-q939-rpr3-3284 high-severity, first patched 2026.0.0); mirrors tests/ -->
+    <PackageVersion Include="SSH.NET" Version="2026.0.0" />
+    <!-- Pin transitive System.Security.Cryptography.Pkcs above GHSA-846f-f764-76mx (high) + GHSA-2fmv-rv2c-59x7 (moderate), first patched 10.0.13 -->
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+    <!-- BCrypt for recovery code hashing (QĐ742 MFA — work factor 11) -->
+    <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
+    <!-- BouncyCastle — certificate chain validation + CMS signature verify for QĐ742 §5.1 digital signature (W3/W4); bumped to 2.7.0 for SSH.NET 2026.0.0 test-side transitive -->
+    <PackageVersion Include="BouncyCastle.Cryptography" Version="2.7.0" />
+    <!-- Transitive version pins (host runtime + Audit/Organization SqlClient + Serilog Console sink) -->
+    <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+  </ItemGroup>
+</Project>

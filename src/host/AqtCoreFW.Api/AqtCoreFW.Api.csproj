@@ -1,0 +1,79 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Api</AssemblyName>
+    <RootNamespace>AqtCoreFW.Api</RootNamespace>
+    <UserSecretsId>aqtcorefw-api-dev</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="AqtCoreFW.Tests.Integration" />
+    <InternalsVisibleTo Include="AqtCoreFW.Startup.SmokeTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+    <PackageReference Include="Yarp.ReverseProxy" />
+    <PackageReference Include="Asp.Versioning.Mvc" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Scalar.AspNetCore" />
+    <ProjectReference Include="..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\shared\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <ProjectReference Include="..\..\modules\notifications\AqtCoreFW.Notifications.Application\AqtCoreFW.Notifications.Application.csproj" />
+    <ProjectReference Include="..\..\modules\notifications\AqtCoreFW.Notifications.Infrastructure\AqtCoreFW.Notifications.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\notifications\AqtCoreFW.Notifications.Presentation\AqtCoreFW.Notifications.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\audit\AqtCoreFW.Audit.Application\AqtCoreFW.Audit.Application.csproj" />
+    <ProjectReference Include="..\..\modules\audit\AqtCoreFW.Audit.Infrastructure\AqtCoreFW.Audit.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\audit\AqtCoreFW.Audit.Presentation\AqtCoreFW.Audit.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\identity\AqtCoreFW.Identity.Application\AqtCoreFW.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\modules\identity\AqtCoreFW.Identity.Infrastructure\AqtCoreFW.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\identity\AqtCoreFW.Identity.Presentation\AqtCoreFW.Identity.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\masterdata\AqtCoreFW.MasterData.Infrastructure\AqtCoreFW.MasterData.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\masterdata\AqtCoreFW.MasterData.Presentation\AqtCoreFW.MasterData.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\organization\AqtCoreFW.Organization.Infrastructure\AqtCoreFW.Organization.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\organization\AqtCoreFW.Organization.Presentation\AqtCoreFW.Organization.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\systemparams\AqtCoreFW.SystemParams.Infrastructure\AqtCoreFW.SystemParams.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\systemparams\AqtCoreFW.SystemParams.Presentation\AqtCoreFW.SystemParams.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\files\AqtCoreFW.Files.Application\AqtCoreFW.Files.Application.csproj" />
+    <ProjectReference Include="..\..\modules\files\AqtCoreFW.Files.Infrastructure\AqtCoreFW.Files.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\files\AqtCoreFW.Files.Presentation\AqtCoreFW.Files.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\workflow\AqtCoreFW.Workflow.Presentation\AqtCoreFW.Workflow.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\workflow\AqtCoreFW.Workflow.Infrastructure\AqtCoreFW.Workflow.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\forms\AqtCoreFW.Forms.Presentation\AqtCoreFW.Forms.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\forms\AqtCoreFW.Forms.Infrastructure\AqtCoreFW.Forms.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\ai\AqtCoreFW.Ai.Application\AqtCoreFW.Ai.Application.csproj" />
+    <ProjectReference Include="..\..\modules\ai\AqtCoreFW.Ai.Domain\AqtCoreFW.Ai.Domain.csproj" />
+    <ProjectReference Include="..\..\modules\ai\AqtCoreFW.Ai.Infrastructure\AqtCoreFW.Ai.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\ai\AqtCoreFW.Ai.Presentation\AqtCoreFW.Ai.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\reporting\AqtCoreFW.Reporting.Application\AqtCoreFW.Reporting.Application.csproj" />
+    <ProjectReference Include="..\..\modules\reporting\AqtCoreFW.Reporting.Infrastructure\AqtCoreFW.Reporting.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\reporting\AqtCoreFW.Reporting.Presentation\AqtCoreFW.Reporting.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\rules\AqtCoreFW.Rules.Application\AqtCoreFW.Rules.Application.csproj" />
+    <ProjectReference Include="..\..\modules\rules\AqtCoreFW.Rules.Infrastructure\AqtCoreFW.Rules.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\rules\AqtCoreFW.Rules.Presentation\AqtCoreFW.Rules.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\collaboration\AqtCoreFW.Collaboration.Application\AqtCoreFW.Collaboration.Application.csproj" />
+    <ProjectReference Include="..\..\modules\collaboration\AqtCoreFW.Collaboration.Infrastructure\AqtCoreFW.Collaboration.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\collaboration\AqtCoreFW.Collaboration.Presentation\AqtCoreFW.Collaboration.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\integration\AqtCoreFW.Integration.Application\AqtCoreFW.Integration.Application.csproj" />
+    <ProjectReference Include="..\..\modules\integration\AqtCoreFW.Integration.Infrastructure\AqtCoreFW.Integration.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\integration\AqtCoreFW.Integration.Presentation\AqtCoreFW.Integration.Presentation.csproj" />
+    <ProjectReference Include="..\..\modules\assetmanagement\AqtCoreFW.AssetManagement.Application\AqtCoreFW.AssetManagement.Application.csproj" />
+    <ProjectReference Include="..\..\modules\assetmanagement\AqtCoreFW.AssetManagement.Infrastructure\AqtCoreFW.AssetManagement.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\assetmanagement\AqtCoreFW.AssetManagement.Presentation\AqtCoreFW.AssetManagement.Presentation.csproj" />
+
+
+    <ProjectReference Include="..\..\modules\contracts\AqtCoreFW.Contracts.Application\AqtCoreFW.Contracts.Application.csproj" />
+    <ProjectReference Include="..\..\modules\contracts\AqtCoreFW.Contracts.Infrastructure\AqtCoreFW.Contracts.Infrastructure.csproj" />
+
+    
+    <ProjectReference Include="..\..\modules\contracts\AqtCoreFW.Contracts.Presentation\AqtCoreFW.Contracts.Presentation.csproj" />
+
+
+    <ProjectReference Include="..\..\modules\businessprocess\AqtCoreFW.BusinessProcess.Application\AqtCoreFW.BusinessProcess.Application.csproj" />
+    <ProjectReference Include="..\..\modules\businessprocess\AqtCoreFW.BusinessProcess.Infrastructure\AqtCoreFW.BusinessProcess.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\modules\businessprocess\AqtCoreFW.BusinessProcess.Presentation\AqtCoreFW.BusinessProcess.Presentation.csproj" />
+  </ItemGroup>
+</Project>

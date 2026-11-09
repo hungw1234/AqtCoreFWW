@@ -1,0 +1,33 @@
+{{- if .Values.metrics.serviceMonitor.enabled }}
+{{/* Prometheus Operator ServiceMonitor.
+     BOTH endpoints below must stay scraped: the app serves two independent metric pipelines on
+     separate paths, and dropping either silently loses half the metrics with no error.
+       /metrics      — prometheus-net: HTTP request metrics (http_requests_received_total,
+                       http_request_duration_seconds_bucket) that infra/prometheus/recording-rules.yml
+                       and the Grafana dashboards query by name.
+       /metrics-otel — OpenTelemetry: every module Meter (audit/signing/workflow/collab/bp counters
+                       and histograms), which the alert rules query. */}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "aqtcorefw.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "aqtcorefw.labels" . | nindent 4 }}
+    {{- with .Values.metrics.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "aqtcorefw.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: {{ .Values.metrics.serviceMonitor.interval | default "30s" }}
+      scrapeTimeout: {{ .Values.metrics.serviceMonitor.scrapeTimeout | default "10s" }}
+    - port: http
+      path: /metrics-otel
+      interval: {{ .Values.metrics.serviceMonitor.interval | default "30s" }}
+      scrapeTimeout: {{ .Values.metrics.serviceMonitor.scrapeTimeout | default "10s" }}
+{{- end }}

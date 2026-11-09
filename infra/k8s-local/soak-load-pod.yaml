@@ -1,0 +1,29 @@
+# In-cluster synthetic soak load (plan 260723-1258 P3 step 7) — survives host sleep and
+# terminal sessions, unlike a host-side curl loop. Light by design: soak = stability, not perf.
+# Traffic goes through the in-cluster Services (same pods the ingress fronts); the FE hit is
+# skipped here (nginx static — no backend value) and covered by the host-side smoke instead.
+# Delete when the soak ends: kubectl delete -f infra/k8s-local/soak-load-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: soak-load
+  namespace: aqt-app
+  labels: { app: soak-load }
+spec:
+  restartPolicy: Always
+  containers:
+    - name: load
+      image: curlimages/curl:8.10.1
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          API=http://aqtcorefw.aqt-app.svc.cluster.local:80
+          while true; do
+            curl -s -m 15 -o /dev/null "$API/health/ready"
+            curl -s -m 15 -o /dev/null "$API/health/live"
+            curl -s -m 15 -o /dev/null "$API/api/v1/masterdata/provinces"
+            sleep 30
+          done
+      resources:
+        requests: { cpu: 10m, memory: 16Mi }
+        limits: { memory: 32Mi }

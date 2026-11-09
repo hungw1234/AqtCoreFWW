@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Workflow.Application</AssemblyName>
+    <RootNamespace>AqtCoreFW.Workflow.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Allow Infrastructure and test projects to access internal types (e.g. CursorCodec) -->
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>AqtCoreFW.Workflow.Application.Tests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>AqtCoreFW.Workflow.Infrastructure</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>AqtCoreFW.Workflow.Infrastructure.Tests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Dapper" />
+    <!-- v2.133 Phase 02c-2: subscribe to CaseCreatedWorkflowRequestedEvent via MassTransit
+         consumer for async workflow provisioning. Logging abstractions arrive transitively
+         via SharedKernel's Microsoft.AspNetCore.App framework reference. -->
+    <PackageReference Include="MassTransit" />
+    <ProjectReference Include="..\AqtCoreFW.Workflow.Domain\AqtCoreFW.Workflow.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Notification.Contracts\AqtCoreFW.Notification.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Forms.Contracts\AqtCoreFW.Forms.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Identity.Contracts\AqtCoreFW.Identity.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.OrgUnit.Contracts\AqtCoreFW.OrgUnit.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Workflow.Contracts\AqtCoreFW.Workflow.Contracts.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,130 @@
+# Vault — local-only, PERSISTENT (file storage on a PVC): secrets survive pod restart and
+# host sleep/resume. Replaced the original dev-mode (in-memory) setup, which lost every
+# secret on restart and left the API/AuthServer in CrashLoopBackOff behind a correct
+# ProductionSecretValidator fail-fast ("Production secret missing or contains DEV marker").
+#
+# File storage means the vault starts SEALED after every restart, so unsealing cannot be a
+# one-shot Job — the `unseal` sidecar below reconciles seal state continuously.
+#
+# Local-only simplifications (NOT a production posture — prod needs a real unseal ceremony
+# with split key custody, see docs/deployment-guide.md):
+#   - 1 key share / threshold 1, unseal key stored on the data PVC beside the data it unlocks.
+#   - Root token is force-set to the well-known `aqt-data-secrets/vault-root-token` value so
+#     every existing consumer (infra/docker/vault-init.sh, scripts/k8s-local-generate-prod-secrets.sh,
+#     the app's Vault config provider) keeps working unchanged. `vault operator init` mints its
+#     OWN root token, which does NOT match that Secret — hence the explicit `token create -id=`.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-config
+  namespace: aqt-data
+data:
+  # Mounted at /vault/config/vault.hcl and passed explicitly via `-config`. The image
+  # entrypoint's VAULT_LOCAL_CONFIG path is NOT usable here: it only writes local.json when
+  # the entrypoint itself builds the argv, and an explicit `command:` bypasses that (probed
+  # 2026-07-25 — Vault exits "A storage backend must be specified").
+  vault.hcl: |
+    storage "file" {
+      path = "/vault/file"
+    }
+    listener "tcp" {
+      address     = "0.0.0.0:8200"
+      tls_disable = true
+    }
+    disable_mlock = true
+    ui            = false
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vault-data
+  namespace: aqt-data
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: { storage: 1Gi }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault
+  namespace: aqt-data
+  labels: { app: vault }
+spec:
+  replicas: 1
+  # A PVC-backed vault cannot have two pods writing the same file storage — never surge.
+  strategy: { type: Recreate }
+  selector:
+    matchLabels: { app: vault }
+  template:
+    metadata:
+      labels: { app: vault }
+    spec:
+      containers:
+        - name: vault
+          image: hashicorp/vault:1.15
+          # Explicit command: the image entrypoint injects -dev-root-token-id whenever the
+          # first arg is `server`, which forces in-memory dev-mode and ignores file storage.
+          command: ["vault", "server", "-config=/vault/config/vault.hcl"]
+          ports:
+            - containerPort: 8200
+          volumeMounts:
+            - { name: data, mountPath: /vault/file }
+            - { name: config, mountPath: /vault/config }
+          # `sealed` still answers 200 on this path (standbyok+sealedcode would not), so the
+          # pod goes Ready before unsealing; the sidecar then unseals. Consumers must wait on
+          # the `vault-unsealed` gate (scripts/k8s-local-reseed.sh), not just pod-ready.
+          readinessProbe:
+            httpGet:
+              path: "/v1/sys/health?sealedcode=200&uninitcode=200"
+              port: 8200
+            periodSeconds: 5
+
+        # Reconciles seal state forever: initializes on first boot, unseals after every
+        # restart. Idempotent by design — safe to restart at any point in the cycle.
+        - name: unseal
+          image: hashicorp/vault:1.15
+          command: ["/bin/sh", "/unseal/vault-unseal.sh"]
+          env:
+            - name: VAULT_ADDR
+              value: "http://127.0.0.1:8200"
+            # Well-known token every other consumer already expects.
+            - name: EXPECTED_ROOT_TOKEN
+              valueFrom:
+                secretKeyRef: { name: aqt-data-secrets, key: vault-root-token }
+          volumeMounts:
+            - { name: unseal-script, mountPath: /unseal }
+            # The unseal key is stored on the data volume itself, so key and data are always
+            # discarded together (see vault-unseal.sh).
+            - { name: data, mountPath: /vault/file }
+          resources:
+            requests: { memory: "32Mi", cpu: "10m" }
+            limits: { memory: "128Mi" }
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: vault-data }
+        - name: config
+          configMap: { name: vault-config }
+        - name: unseal-script
+          # ⚠️ NOT defined in this file. scripts/k8s-local-reseed.sh creates it from
+          # infra/k8s-local/vault-unseal.sh (verbatim-mount pattern, same as vault-init.sh), so
+          # `kubectl apply -f vault.yaml` alone leaves the pod in ContainerCreating. Recreate it
+          # after editing that script, then `kubectl rollout restart deploy/vault` — a running
+          # sh keeps executing the old script even once kubelet rewrites the file:
+          #   kubectl -n aqt-data create configmap vault-unseal-script \
+          #     --from-file=vault-unseal.sh=infra/k8s-local/vault-unseal.sh \
+          #     --dry-run=client -o yaml | kubectl apply -f -
+          #   kubectl -n aqt-data rollout restart deploy/vault
+          configMap:
+            name: vault-unseal-script
+            defaultMode: 0755
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+  namespace: aqt-data
+spec:
+  selector: { app: vault }
+  ports:
+    - { port: 8200, targetPort: 8200 }

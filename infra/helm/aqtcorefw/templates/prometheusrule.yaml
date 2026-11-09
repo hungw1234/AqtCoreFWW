@@ -1,0 +1,94 @@
+{{- if .Values.metrics.prometheusRule.enabled }}
+{{/* Prometheus Operator PrometheusRule — the alerts that fire when the app, or the alerting
+     pipeline itself, stops reporting.
+
+     Why this exists: the in-app AlertEvaluationJob evaluates its rules BY querying Prometheus over
+     HTTP. That makes it structurally unable to report its own worst failure — if Prometheus is
+     unreachable, every rule's query fails, every rule reads as non-breaching, and the whole alerting
+     system goes quiet without emitting a single breach. Detecting that requires a signal from
+     OUTSIDE that query path, which is what these rules are.
+
+     Requires the Prometheus Operator (kube-prometheus-stack). The `labels` below must match the
+     operator's ruleSelector, exactly like the ServiceMonitor's do — see values-prod.yaml. */}}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "aqtcorefw.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "aqtcorefw.labels" . | nindent 4 }}
+    {{- with .Values.metrics.prometheusRule.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  groups:
+    - name: aqtcorefw.availability
+      rules:
+        # The scrape target is down. Selected by `service`, the label the Operator derives from the
+        # Service name, rather than by `job` — `job` naming has varied across operator versions,
+        # while the endpoint's service label is stable.
+        - alert: AqtCoreFWDown
+          expr: up{service="{{ include "aqtcorefw.fullname" . }}"} == 0
+          for: {{ .Values.metrics.prometheusRule.downFor | default "2m" }}
+          labels:
+            severity: critical
+          annotations:
+            summary: "AqtCoreFW target {{ `{{ $labels.instance }}` }} is down"
+            description: >-
+              Prometheus cannot scrape {{ `{{ $labels.instance }}` }}. While this is firing, no
+              in-app AlertRule can breach either — the evaluation job reaches its metrics through
+              this same Prometheus, so treat in-app alert silence as uninformative until this clears.
+
+        # Fires continuously and on purpose. Its VALUE is meaningless; its ABSENCE is the signal.
+        # Route it to a receiver that alarms when it stops arriving (Alertmanager heartbeat / an
+        # external dead-man's-switch such as Dead Man's Snitch or Healthchecks.io). That is the only
+        # way to catch Prometheus or Alertmanager themselves dying — a dead monitoring stack cannot
+        # send an alert about being dead, so the health signal has to be the steady arrival of
+        # something ordinary.
+        - alert: AqtCoreFWWatchdog
+          expr: vector(1)
+          labels:
+            severity: none
+          annotations:
+            summary: "Heartbeat — alerting pipeline is alive"
+            description: >-
+              Always firing by design. If this alert stops arriving at its receiver, the monitoring
+              stack itself is down; nothing else in this file can tell you that.
+
+    - name: aqtcorefw.alerting
+      rules:
+        # The evaluation job's own failure counter, exported on /metrics-otel. Covers the case
+        # Prometheus stays up but rule evaluation is broken (a failing query, an unreachable
+        # notification channel) — degradation the in-app self-monitor rule can also catch, duplicated
+        # here so it survives the in-app rule being disabled or misconfigured.
+        #
+        # Scoped to source="scheduled". The same counters also record admin-triggered test presses
+        # from POST /admin/alerts/{id}/test, which are not evaluator degradation — a human asked a
+        # question and got a correct answer. Untagged, three presses against a typo'd metric name
+        # would page ops about a perfectly healthy evaluator.
+        - alert: AqtCoreFWAlertEvaluationFailing
+          expr: sum(increase(alerting_evaluation_failed_total{source="scheduled"}[5m])) > {{ .Values.metrics.prometheusRule.evaluationFailureThreshold | default 5 }}
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "AqtCoreFW alert evaluation is failing"
+            description: >-
+              Scheduled alert rule evaluation is failing, so rules can neither breach nor clear. Check
+              the reason label — query_failed points at Prometheus reachability from the app,
+              rule_error at a specific broken rule. Admin test presses are excluded by source.
+
+        # A breached rule that could not be delivered. The alert fired and nobody was told.
+        # Scoped to source="scheduled" for the same reason as above, and it matters more here: the
+        # threshold is > 0, so a SINGLE admin test of a knowingly-broken EMAIL rule would page ops.
+        - alert: AqtCoreFWAlertNotificationFailing
+          expr: sum(increase(alerting_notification_failed_total{source="scheduled"}[5m])) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "AqtCoreFW alert notifications are not being delivered"
+            description: >-
+              Check the channel and reason labels. unconfigured means the relay was never seeded
+              (Email__Host in Vault); delivery_failed means it was reachable but the send threw.
+{{- end }}

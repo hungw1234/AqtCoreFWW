@@ -1,0 +1,251 @@
+# AqtCoreFW Helm default values
+# Override per environment with values-staging.yaml / values-prod.yaml
+
+replicaCount: 2
+
+image:
+  repository: nexus.internal:5000/aqtcorefw/api
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - name: nexus-registry-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+# ─── Service ─────────────────────────────────────────────────────────────────
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+# ─── Ingress ─────────────────────────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+  hosts:
+    - host: api.aqtcorefw.internal
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: aqtcorefw-tls
+      hosts:
+        - api.aqtcorefw.internal
+
+# ─── Resources ───────────────────────────────────────────────────────────────
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
+# ─── Autoscaling ─────────────────────────────────────────────────────────────
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+# ─── Security Context ────────────────────────────────────────────────────────
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  runAsUser: 1001
+  capabilities:
+    drop:
+      - ALL
+
+# ─── Health Probes ───────────────────────────────────────────────────────────
+livenessProbe:
+  httpGet:
+    # The app maps /health/live and /health/ready only (HealthCheckConfiguration.cs:133,140)
+    # — a bare /health returns 404 and would restart-loop the pod.
+    path: /health/live
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: 8080
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  failureThreshold: 3
+
+# ─── Update Strategy ─────────────────────────────────────────────────────────
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+# ─── Environment Variables ───────────────────────────────────────────────────
+# Sensitive values must be provided via Vault/K8s secrets — these are placeholders
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Production
+  - name: ConnectionStrings__Default
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: db-connection-string
+  - name: Redis__ConnectionString
+    valueFrom:
+      secretKeyRef:
+        name: aqtcorefw-secrets
+        key: redis-connection-string
+  - name: Auth__AuthorityUrl
+    valueFrom:
+      configMapKeyRef:
+        name: aqtcorefw-config
+        key: auth-authority-url
+  # RLS-PRINCIPAL-SKIP-STARTUP-MIGRATIONS: when "true", the runtime pod skips in-app EF migrations so
+  # the runtime DB login can drop db_ddladmin. Default "false" (safe) — flip to "true" via extraEnv
+  # ONLY AFTER wiring the db-migrate Job to a separate elevated login. See docs/deployment-guide.md §4
+  # and the NOTE in values-prod.yaml.
+  - name: SKIP_STARTUP_MIGRATIONS
+    value: "false"
+
+# ─── Extra environment variables (per-env append, no replace) ────────────────
+# Use this for env-specific keys like CORS allowlist. ASP.NET array binding
+# requires indexed keys: Cors__AllowedOrigins__0, __1, etc.
+# Example (add to values-staging.yaml / values-prod.yaml):
+#   extraEnv:
+#     - name: Cors__AllowedOrigins__0
+#       value: "https://tenant1-fe.example.com"
+#     - name: Cors__AllowedOrigins__1
+#       value: "https://tenant2-fe.example.com"
+extraEnv: []
+
+# ─── ConfigMap data (non-secret config) ──────────────────────────────────────
+config:
+  # AuthServer URL — must match issuer in discovery doc
+  # In K8s: use internal service DNS (same cluster) or public URL
+  authAuthorityUrl: "https://auth.aqtcorefw.internal"
+  allowedHosts: "*"
+  # Gateway mode: "Disabled" when behind ingress, "InProcess" for standalone
+  gatewayMode: "Disabled"
+
+# ─── Volume mounts (needed for readOnlyRootFilesystem) ───────────────────────
+extraVolumeMounts:
+  - name: tmp
+    mountPath: /tmp/asp
+  - name: logs
+    mountPath: /app/logs
+
+extraVolumes:
+  - name: tmp
+    emptyDir: {}
+  - name: logs
+    emptyDir: {}
+
+# ─── Blue-Green (optional, toggled by pipeline) ──────────────────────────────
+blueGreen:
+  enabled: false
+
+# ─── Pod disruption budget ───────────────────────────────────────────────────
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# ─── Vault credentials (fallback — prefer External Secrets Operator in prod) ─
+vault:
+  roleId: ""
+  secretId: ""
+
+# ─── Network Policy ──────────────────────────────────────────────────────────
+networkPolicy:
+  # Enable default-deny ingress + allow-from-ingress-only policy
+  enabled: true
+  # Namespace where ingress-nginx controller runs
+  ingressControllerNamespace: ingress-nginx
+  # Allow Prometheus scraper ingress from monitoring namespace
+  allowPrometheus: true
+  monitoringNamespace: monitoring
+  # Namespace for SQL Server, Redis, RabbitMQ pods
+  dataNamespace: data
+  # Outbound (egress) destination controls
+  egress:
+    # Explicit destination CIDRs allowed on port 443 (external Auth IdP + remote
+    # signing providers). Vanilla NetworkPolicy cannot match by FQDN, so declare
+    # provider egress CIDRs here to lock down external HTTPS. Empty = broad 443 to
+    # any destination (fallback). PROD SHOULD populate this (e.g. in values-prod.yaml)
+    # for strict egress; leaving it empty keeps the pre-existing broad behavior.
+    # A populated list MUST include the Auth IdP CIDR (not only signing providers),
+    # otherwise authentication egress is dropped once the broad fallback disappears.
+    httpsCidrs: []
+    # OTEL collector egress (trace/metric push on 4317/4318). Off by default: no
+    # collector is wired today, so keeping it off avoids an unscoped egress hole.
+    # COUPLING: when the app's Otel:Endpoint is pointed at a real in-cluster collector,
+    # also set otel.enabled=true and otel.namespace to the collector's namespace, or
+    # default-deny egress silently drops telemetry export.
+    otel:
+      enabled: false
+      # Namespace hosting the in-cluster OTEL collector (used only when enabled).
+      namespace: monitoring
+
+# ─── Metrics / Monitoring ──────────────────────────────────────────────────
+metrics:
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s
+    labels: {}
+  # Alerts that fire from OUTSIDE the app, so they still work when the app's own alert evaluator
+  # cannot: that job reaches its metrics by querying Prometheus, so a Prometheus outage silences
+  # every in-app rule at once, itself included.
+  #
+  # Off in EVERY environment today, prod included — there is no deployed cluster yet, so these rules
+  # have never run against a real Prometheus Operator. Requires that Operator; `labels` must match
+  # its ruleSelector, which is a DIFFERENT field from serviceMonitorSelector: a working ServiceMonitor
+  # does not prove rules will load, and a label mismatch is silent (objects created, never loaded).
+  # Enable procedure — read the cluster's ruleSelector first, then verify loading: see
+  # docs/deployment-guide.md §9.
+  prometheusRule:
+    enabled: false
+    labels: {}
+    # How long a target may be unscrapeable before AqtCoreFWDown fires.
+    downFor: 2m
+    # Failed rule evaluations per 5m window before alerting. A continuously failing rule records
+    # two per run (a thrown query counts as both query_failed and no_data) and the job runs every
+    # minute, so one broken rule yields ~10 — this fires on the first sustained failure while
+    # staying above a lone transient blip.
+    evaluationFailureThreshold: 5
+
+# ─── Extended config keys (used by configmap.yaml) ───────────────────────────
+# config.authAuthorityUrl and config.allowedHosts already defined above;
+# Keys below override defaults per environment in values-staging.yaml / values-prod.yaml:
+#   config.aspnetcoreEnvironment, config.logLevelDefault, config.redisConnectionString,
+#   config.aiOllamaEnabled
+#
+# Defaults (defined via | default fallback in configmap.yaml):
+#   aspnetcoreEnvironment: "Production"
+#   logLevelDefault: "Information"
+#   redisConnectionString: ""             # set in values-staging/prod
+#   aiOllamaEnabled: false
+#   defaultConnectionString: ""            # injected by pipeline / ESO
+#   logLevelDefault: "Information"
+#   redisConnectionString: ""              # injected by pipeline / ESO
+#   aiOllamaEnabled: false

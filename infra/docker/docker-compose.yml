@@ -1,0 +1,289 @@
+# AqtCoreFW local development infrastructure
+# Usage: docker compose up -d
+# Credentials are dev-only — production secrets sourced from Vault.
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    # No arm64 image exists: Apple Silicon runs it under Rosetta (Docker Desktop setting
+    # "Use Rosetta for x86_64/amd64 emulation"). No-op on Windows x64 and CI runners.
+    platform: linux/amd64
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "127.0.0.1:1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -C -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: gov
+      RABBITMQ_DEFAULT_PASS: gov123
+    ports:
+      - "127.0.0.1:5672:5672"   # AMQP
+      - "127.0.0.1:15672:15672" # Management UI (http://localhost:15672)
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  # MinIO S3-compatible object storage — backs the Files module (upload / download / scan-quarantine).
+  # The host-run API (IMinioClient) targets localhost:9000, port-mapped below. Dev-only root creds
+  # (match MinioOptions defaults); production uses managed object storage + Vault-sourced keys.
+  # The Files bucket is auto-created on first upload (EnsureBucketExistsAsync) — no init container.
+  minio:
+    # minio/minio is no longer pullable from Docker Hub (denied for every tag) and quay.io has no manifest.
+    # Community multi-arch rebuild of the upstream release (amd64 + arm64). Dev-only.
+    image: ghcr.io/coollabsio/minio:RELEASE.2025-10-15T17-29-55Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "127.0.0.1:9000:9000"   # S3 API
+      - "127.0.0.1:9001:9001"   # Console UI (http://localhost:9001)
+    volumes:
+      - minio_data:/data
+
+  # ClamAV antivirus daemon — Files module phase 2 of the two-phase upload (ClamAvScanJob → clamd over TCP 3310).
+  # The non-_base image ships a baked-in signature DB so clamd answers on first boot; clamav_data persists
+  # freshclam DB updates across restarts (avoids a ~300 MB re-download every recreate).
+  # api depends_on this with condition: service_started (parity with minio). clamd's DB load can take minutes;
+  # the scan job already treats a not-yet-ready clamd as a retryable Error (file stays Quarantined, never
+  # deleted, Hangfire retries) — so gating api boot on clamd health would add cold-boot fragility (the 180s
+  # start_period below could burn the api's on-failure:3 budget) for no safety gain. The healthcheck stays so
+  # `docker compose ps` still reports clamd readiness.
+  clamav:
+    image: clamav/clamav:1.4
+    ports:
+      - "127.0.0.1:3310:3310"   # clamd TCP — host-side aqt-runapp (dotnet run) reaches it via this mapping
+    volumes:
+      - clamav_data:/var/lib/clamav
+    healthcheck:
+      test: ["CMD", "clamdcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 6
+      start_period: 180s   # clamd loads the full signature DB into RAM before it answers PING
+
+  # HashiCorp Vault — dev mode, in-memory storage, root token is FIXED for parity
+  # across dev machines. NEVER use this token or this service definition in production.
+  # Phase 06 (QĐ 742 cấp 4) adds this for dev↔prod parity + integration tests (D10.3).
+  # Production uses HA Vault cluster + AppRole auth + TLS (out of scope per D10.5 → ops infra).
+  vault:
+    image: hashicorp/vault:1.15
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "dev-only-token"
+      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+      VAULT_ADDR: "http://0.0.0.0:8200"
+    ports:
+      - "127.0.0.1:8200:8200"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8200/v1/sys/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Seeds dev keys + per-tenant email peppers into Vault KV v2 mount `secret/`.
+  # Idempotent — KV v2 POST creates new versions on re-run. Logic lives in
+  # vault-init.sh so it can also be invoked manually from host (debugging / re-seed).
+  vault-init:
+    image: curlimages/curl:8.10.1
+    depends_on:
+      vault:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "dev-only-token"
+    volumes:
+      - ./vault-init.sh:/vault-init.sh:ro
+    command: ["sh", "/vault-init.sh"]
+
+  authserver:
+    build:
+      # Repo-root context: the Dockerfile COPYs src/... paths (its own header says
+      # "Build context: repo root"); the old ../../src context could never build.
+      context: ../../
+      dockerfile: src/host/AqtCoreFW.AuthServer/Dockerfile
+    ports:
+      # AUTH_PORT: macOS holds 5000 for AirPlay Receiver. Set AUTH_PORT (see the example env file next to
+      # this compose file) to move the host port; IssuerUri, AuthorityUrl and the web OIDC authority follow it.
+      - "${AUTH_PORT:-5000}:5000"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Urls: "http://+:5000"
+      # PoolBlockingPeriod=NeverBlock: on an empty volume Hangfire probes the DB before migrations create it
+      # (login fails, error 4060). Without this SqlClient rethrows that cached failure for ~5s, so the
+      # post-migration encryption upgrade step dies even though the database now exists.
+      ConnectionStrings__Default: "Server=sqlserver,1433;Database=AqtCoreFW;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;PoolBlockingPeriod=NeverBlock"
+      # IssuerUri must match what API uses for validation (host.docker.internal)
+      # FE uses http://localhost:5000 via port mapping (same host IP)
+      Auth__IssuerUri: "http://host.docker.internal:${AUTH_PORT:-5000}"
+      # Vault — dev token must match VAULT_DEV_ROOT_TOKEN_ID on vault service.
+      # Without this, VaultKeyResolver falls back to literal "root" token → permission denied
+      # → Vault-pepper seeders crash on boot. NEVER use these values in production.
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "dev-only-token"
+    depends_on:
+      # Healthy, not just started: on an empty volume authserver and api both run CREATE DATABASE;
+      # the loser dies with SQL error 1801 (database already exists). authserver migrates first,
+      # api waits for authserver (below).
+      sqlserver:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "5001:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: ../../
+      dockerfile: src/host/AqtCoreFW.Api/Dockerfile
+    # No host port — nginx is the only entry point
+    expose:
+      - "8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # Pool size 200 per replica: 3 replicas × 200 = 600 total connections (well within SQL Server max)
+      ConnectionStrings__Default: "Server=sqlserver,1433;Database=AqtCoreFW;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true;Min Pool Size=10;Max Pool Size=200;Connection Lifetime=120;Connect Timeout=15"
+      # appsettings.Development.json points AuditAdmin at localhost,1433 (host-run API). Inside the container
+      # localhost is the api itself, so the audit-unsigned-backlog health check and cross-tenant audit reads
+      # fail and /health/ready stays 503. Point it at the sqlserver service.
+      ConnectionStrings__AuditAdmin: "Server=sqlserver,1433;Database=AqtCoreFW;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;Min Pool Size=1;Max Pool Size=5;Connect Timeout=15"
+      Redis__ConnectionString: "redis:6379"
+      Bus__Transport: "InMemory"
+      # Must match issuer in AuthServer discovery doc (http://localhost:5000)
+      # host.docker.internal resolves to host machine → reaches AuthServer via port mapping
+      Auth__AuthorityUrl: "http://host.docker.internal:${AUTH_PORT:-5000}"
+      # Disable YARP InProcess — nginx is the gateway in Docker
+      Gateway__Mode: "Disabled"
+      # .NET thread pool: pre-warm enough threads for 500 CCU / num_replicas
+      DOTNET_SYSTEM_THREADING_THREADPOOL_MIN_THREADS: "200"
+      # k6 test API key seeder — only first replica needs to seed
+      SEED_TEST_APIKEY: "true"
+      TEST_TENANT_ID: "00000000-0000-0000-0000-000000000001"
+      TEST_USER_ID: "00000000-0000-0000-0000-000000000002"
+      # Vault — dev token must match VAULT_DEV_ROOT_TOKEN_ID on vault service.
+      # Without this, VaultKeyResolver falls back to literal "root" → permission denied
+      # → HmacChainService / encryption resolver crash on every audit-log write.
+      # NEVER use these values in production (prod uses AppRole via VAULT_ROLE_ID/VAULT_SECRET_ID).
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "dev-only-token"
+      # MinIO object storage (Files module). In the Docker network the service hostname is `minio`,
+      # NOT localhost — overrides the MinioOptions default so downloads/uploads reach the container.
+      MinIO__Endpoint: "minio:9000"
+      # ClamAV daemon (Files module virus scan). Same rule as MinIO: inside the network the host is the
+      # service name `clamav`, NOT localhost — overrides the ClamAvOptions default so clamd is reachable.
+      ClamAV__Host: "clamav"
+    restart: on-failure:3
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      authserver:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      clamav:
+        condition: service_started
+
+  web:
+    build:
+      # Repo-root context: web/Dockerfile reaches other/vgca_usb_token (vite static-copy)
+      context: ../../
+      dockerfile: web/Dockerfile
+      args:
+        VITE_OIDC_AUTHORITY: "http://localhost:${AUTH_PORT:-5000}"
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    restart: on-failure:3
+    healthcheck:
+      test: wget -qO- http://127.0.0.1/index.html || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.0
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    environment:
+      QDRANT__SERVICE__HTTP_PORT: 6333
+    profiles: ["ai"]
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    profiles: ["ai"]
+
+  ollama-init:
+    image: curlimages/curl:8.10.1
+    depends_on:
+      ollama:
+        condition: service_started
+    restart: "no"
+    profiles: ["ai"]
+    command: >
+      sh -c "sleep 10 &&
+             curl -s -X POST http://ollama:11434/api/pull -d '{\"name\":\"nomic-embed-text\"}' &&
+             curl -s -X POST http://ollama:11434/api/pull -d '{\"name\":\"qwen2.5:7b\"}' &&
+             echo 'Ollama models ready'"
+
+  # .NET Aspire Dashboard — optional OTel trace/log/metric viewer for local dev.
+  # Usage (native `dotnet run` mode only):
+  #   docker compose -f infra/docker/docker-compose.yml --profile aspire up aspire-dashboard -d
+  #   Then open http://localhost:18888
+  # Port 4317 on host → 18889 in container (matches app default `Otel:Endpoint=http://localhost:4317`),
+  # so no appsettings change required. For Docker-mode api service, set `Otel__Endpoint=http://aspire-dashboard:18889`.
+  # PoC only — NOT for production (Grafana/Prometheus/Seq remain production observability stack).
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
+    ports:
+      - "18888:18888"   # Dashboard web UI
+      - "4317:18889"    # OTLP gRPC receiver (host 4317 → container 18889)
+    environment:
+      DASHBOARD__FRONTEND__AUTHMODE: "Unsecured"     # Local dev only — do NOT use in prod
+      DASHBOARD__OTLP__AUTHMODE: "Unsecured"
+    profiles: ["aspire"]
+
+volumes:
+  sqlserver_data:
+  redis_data:
+  rabbitmq_data:
+  minio_data:
+  clamav_data:        # persists clamd signature DB across container recreates
+  qdrant_storage:
+  ollama_models:
+  # Vault dev mode runs in-memory — no volume needed.

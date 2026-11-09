@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AqtCoreFW.Notifications.Application</AssemblyName>
+    <RootNamespace>AqtCoreFW.Notifications.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="FluentResults" />
+    <ProjectReference Include="..\AqtCoreFW.Notifications.Domain\AqtCoreFW.Notifications.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel\AqtCoreFW.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.SharedKernel.Contracts\AqtCoreFW.SharedKernel.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Notification.Contracts\AqtCoreFW.Notification.Contracts.csproj" />
+    <!-- IIdentityModuleClient resolves a RecipientUserId to the address an email is actually sent to.
+         Leaf edge: Identity.Contracts has no ProjectReferences, so this introduces no cycle. -->
+    <ProjectReference Include="..\..\..\shared\AqtCoreFW.Identity.Contracts\AqtCoreFW.Identity.Contracts.csproj" />
+    <!-- Phase-04b: subscribe to CaseTransitionedIntegrationEvent (SharedKernel.Contracts).
+         The former cross-module Cases.Domain reference was removed; Notifications now
+         receives Case transitions via MassTransit consumer on the Contracts message type. -->
+    <PackageReference Include="MassTransit" />
+  </ItemGroup>
+</Project>
